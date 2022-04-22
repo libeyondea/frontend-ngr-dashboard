@@ -35,6 +35,26 @@ const MainRouter: RouteObject[] = [
 		)
 	},
 	{
+		path: `${routeConstant.ROUTE_NAME_MAIN_POST}/*`,
+		element: <Suspense fallback={null}>{/* <UserComponent /> */}</Suspense>
+	},
+	{
+		path: `${routeConstant.ROUTE_NAME_MAIN_CATEGORY}/*`,
+		element: <Suspense fallback={null}>{/* <UserComponent /> */}</Suspense>
+	},
+	{
+		path: `${routeConstant.ROUTE_NAME_MAIN_TAG}/*`,
+		element: <Suspense fallback={null}>{/* <UserComponent /> */}</Suspense>
+	},
+	{
+		path: `${routeConstant.ROUTE_NAME_MAIN_FEEDBACK}/*`,
+		element: <Suspense fallback={null}>{/* <UserComponent /> */}</Suspense>
+	},
+	{
+		path: `${routeConstant.ROUTE_NAME_MAIN_ADVISE}/*`,
+		element: <Suspense fallback={null}>{/* <UserComponent /> */}</Suspense>
+	},
+	{
 		path: `${routeConstant.ROUTE_NAME_MAIN_PROFILE}`,
 		element: (
 			<Suspense fallback={null}>
