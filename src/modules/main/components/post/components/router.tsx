@@ -4,32 +4,32 @@ import { lazy, Suspense } from 'react';
 
 import type { RouteObject } from 'react-router-dom';
 
-const ListUserComponent = lazy(() => import('./list/components'));
-const NewUserComponent = lazy(() => import('./new/components'));
-const EditUserComponent = lazy(() => import('./edit/components'));
+const ListPostComponent = lazy(() => import('./list/components'));
+const NewPostComponent = lazy(() => import('./new/components'));
+const EditPostComponent = lazy(() => import('./edit/components'));
 
-const UserRouter: RouteObject[] = [
+const PostRouter: RouteObject[] = [
 	{
 		path: '',
 		element: (
 			<Suspense fallback={null}>
-				<ListUserComponent />
+				<ListPostComponent />
 			</Suspense>
 		)
 	},
 	{
-		path: `${routeConstant.ROUTE_NAME_MAIN_USER_NEW}`,
+		path: `${routeConstant.ROUTE_NAME_MAIN_POST_NEW}`,
 		element: (
 			<Suspense fallback={null}>
-				<NewUserComponent />
+				<NewPostComponent />
 			</Suspense>
 		)
 	},
 	{
-		path: `:userId/${routeConstant.ROUTE_NAME_MAIN_USER_EDIT}`,
+		path: `:postId/${routeConstant.ROUTE_NAME_MAIN_POST_EDIT}`,
 		element: (
 			<Suspense fallback={null}>
-				<EditUserComponent />
+				<EditPostComponent />
 			</Suspense>
 		)
 	},
@@ -39,4 +39,4 @@ const UserRouter: RouteObject[] = [
 	}
 ];
 
-export default UserRouter;
+export default PostRouter;

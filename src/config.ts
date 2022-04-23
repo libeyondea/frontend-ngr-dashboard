@@ -20,6 +20,9 @@ const config = {
 			PROFILE: '/profile',
 
 			CRUD_USER: '/users',
+
+			CRUD_POST: '/posts',
+
 			UPLOAD_IMAGE: '/images/upload'
 		}
 	},

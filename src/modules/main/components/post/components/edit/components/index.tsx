@@ -17,7 +17,7 @@ import toastify from 'helpers/toastify';
 
 type Props = {};
 
-const EditUserComponent: React.FC<Props> = () => {
+const EditPostComponent: React.FC<Props> = () => {
 	const params = useParams();
 	const [isUploading, setUploading] = useState(false);
 	const [isUpdating, setUpdating] = useState(false);
@@ -447,4 +447,4 @@ const EditUserComponent: React.FC<Props> = () => {
 	);
 };
 
-export default EditUserComponent;
+export default EditPostComponent;

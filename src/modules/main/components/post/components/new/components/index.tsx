@@ -17,7 +17,7 @@ import toastify from 'helpers/toastify';
 
 type Props = {};
 
-const NewUserComponent: React.FC<Props> = () => {
+const NewPostComponent: React.FC<Props> = () => {
 	const navigate = useNavigate();
 	const [isUploading, setUploading] = useState(false);
 	const [isCreating, setCreating] = useState(false);
@@ -420,4 +420,4 @@ const NewUserComponent: React.FC<Props> = () => {
 	);
 };
 
-export default NewUserComponent;
+export default NewPostComponent;

@@ -2,11 +2,11 @@ import BreadcrumbComponent from 'components/Breadcrumb/components';
 import CardComponent from 'components/Card/components';
 import LinkComponent from 'components/Link/components';
 import time from 'helpers/time';
-import { User } from 'models/user';
+import { Post } from 'models/post';
 import { useEffect, useState } from 'react';
-import userService from 'services/userService';
+import postService from 'services/postService';
 import * as routeConstant from 'constants/route';
-import * as userConstant from 'constants/user';
+import * as postConstant from 'constants/post';
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa';
 import classNames from 'classnames';
 import Paginationomponent from 'components/Pagination/components';
@@ -15,10 +15,10 @@ import BlockUIComponent from 'components/BlockUI/components';
 
 type Props = {};
 
-const ListUserComponent: React.FC<Props> = () => {
+const ListPostComponent: React.FC<Props> = () => {
 	const [isLoading, setLoading] = useState(true);
 	const [isDeleting, setDeleting] = useState(false);
-	const [data, setData] = useState<User[]>([]);
+	const [data, setData] = useState<Post[]>([]);
 	const [pagination, setPagination] = useState({
 		page: 1,
 		limit: 10,
@@ -41,12 +41,12 @@ const ListUserComponent: React.FC<Props> = () => {
 		}));
 	};
 
-	const onDeleteClicked = (userId: number) => {
+	const onDeleteClicked = (postId: number) => {
 		if (window.confirm('Do you want to delete?')) {
 			new Promise((resolve, reject) => {
 				setDeleting(true);
-				userService
-					.delete(userId)
+				postService
+					.delete(postId)
 					.then((response) => {
 						return resolve(response);
 					})
@@ -59,7 +59,7 @@ const ListUserComponent: React.FC<Props> = () => {
 			})
 				.then((result) => {
 					setLoading(true);
-					userService
+					postService
 						.list(pagination.page, pagination.limit)
 						.then((response) => {
 							setData(response.data.data);
@@ -80,7 +80,7 @@ const ListUserComponent: React.FC<Props> = () => {
 
 	useEffect(() => {
 		setLoading(true);
-		userService
+		postService
 			.list(pagination.page, pagination.limit)
 			.then((response) => {
 				setData(response.data.data);
@@ -95,12 +95,26 @@ const ListUserComponent: React.FC<Props> = () => {
 			});
 	}, [pagination.limit, pagination.page]);
 
+	const recursiveCategories = (categories: any) => {
+		return categories.map((category: any) => (
+			<>
+				{category.translations.map((translation: any) => (
+					<div key={translation.id}>
+						<span className="uppercase font-semibold text-blue-600 mr-1">{translation.language.code}:</span>
+						<span>{translation.name}</span>
+					</div>
+				))}
+				<div className="ml-4">{category.children && recursiveCategories(category.children)}</div>
+			</>
+		));
+	};
+
 	return (
 		<>
-			<BreadcrumbComponent className="mb-4">List users</BreadcrumbComponent>
+			<BreadcrumbComponent className="mb-4">List posts</BreadcrumbComponent>
 			<div className="grid grid-cols-1 gap-4">
 				<div className="col-span-1 w-full">
-					<CardComponent header="List users">
+					<CardComponent header="List posts">
 						<div className="relative">
 							{isLoading ? (
 								<TableLoadingComponent />
@@ -115,10 +129,17 @@ const ListUserComponent: React.FC<Props> = () => {
 															<th
 																scope="col"
 																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
+																style={{ minWidth: '20rem' }}
 															>
-																User
+																Post
 															</th>
-
+															<th
+																scope="col"
+																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
+																style={{ minWidth: '20rem' }}
+															>
+																Excerpt
+															</th>
 															<th
 																scope="col"
 																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
@@ -129,17 +150,17 @@ const ListUserComponent: React.FC<Props> = () => {
 																scope="col"
 																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
 															>
-																Role
+																Categories
 															</th>
 															<th
 																scope="col"
-																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
+																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider whitespace-nowrap"
 															>
 																Updated at
 															</th>
 															<th
 																scope="col"
-																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
+																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider whitespace-nowrap"
 															>
 																Created at
 															</th>
@@ -152,31 +173,44 @@ const ListUserComponent: React.FC<Props> = () => {
 														{!data.length ? (
 															<tr>
 																<td colSpan={6} className="p-3 whitespace-nowrap text-center">
-																	Empty user
+																	Empty posts
 																</td>
 															</tr>
 														) : (
-															data.map((user) => (
-																<tr key={user.id}>
-																	<td className="p-3 whitespace-nowrap">
+															data.map((post) => (
+																<tr key={post.id}>
+																	<td className="p-3 text-sm whitespace-normal">
 																		<div className="flex items-center">
-																			<div className="flex-shrink-0 h-10 w-10">
+																			{/* <div className="flex-shrink-0 h-32 w-32 mr-4">
 																				<img
-																					className="h-10 w-10 rounded-full"
-																					src={user.avatar_url}
-																					alt={user.user_name}
+																					className="h-32 w-32"
+																					src={post.image_url}
+																					alt={post.translations[0].title}
 																				/>
-																			</div>
-																			<div className="ml-4">
-																				<div className="text-sm font-medium text-gray-900">
-																					{user.first_name} {user.last_name} (
-																					{user.user_name})
-																				</div>
-																				<div className="text-sm text-gray-500">
-																					{user.email}
-																				</div>
+																			</div> */}
+																			<div>
+																				{post.translations.map((translation) => (
+																					<div key={translation.id}>
+																						<span className="uppercase font-semibold text-blue-600 mr-1">
+																							{translation.language.code}:
+																						</span>
+																						<span className="font-semibold text-gray-900">
+																							{translation.title}
+																						</span>
+																					</div>
+																				))}
 																			</div>
 																		</div>
+																	</td>
+																	<td className="p-3 whitespace-normal text-sm text-gray-500">
+																		{post.translations.map((translation) => (
+																			<div key={translation.id}>
+																				<span className="uppercase font-semibold text-blue-600 mr-1">
+																					{translation.language.code}:
+																				</span>
+																				<span>{translation.excerpt}</span>
+																			</div>
+																		))}
 																	</td>
 																	<td className="p-3 whitespace-nowrap">
 																		<span
@@ -184,33 +218,33 @@ const ListUserComponent: React.FC<Props> = () => {
 																				'px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize',
 																				{
 																					'bg-green-100 text-green-800':
-																						user.status ===
-																						userConstant.USER_STATUS_ACTIVE,
+																						post.status ===
+																						postConstant.POST_STATUS_PUBLISH,
 																					'bg-yellow-100 text-yellow-800':
-																						user.status ===
-																						userConstant.USER_STATUS_INACTIVE,
-																					'bg-red-100 text-red-800':
-																						user.status ===
-																						userConstant.USER_STATUS_BANNED
+																						post.status ===
+																						postConstant.POST_STATUS_PENDING,
+																					'bg-red-100 text-gray-400':
+																						post.status ===
+																						postConstant.POST_STATUS_DRAFT
 																				}
 																			)}
 																		>
-																			{user.status}
+																			{post.status}
 																		</span>
 																	</td>
 																	<td className="p-3 whitespace-nowrap text-sm text-gray-500 capitalize">
-																		{user.role}
+																		{recursiveCategories(post.categories)}
 																	</td>
 																	<td className="p-3 whitespace-nowrap text-sm text-gray-500">
-																		{time.ago(user.updated_at)}
+																		{time.ago(post.updated_at)}
 																	</td>
 																	<td className="p-3 whitespace-nowrap text-sm text-gray-500">
-																		{time.format(user.created_at)}
+																		{time.format(post.created_at)}
 																	</td>
 																	<td className="p-3 whitespace-nowrap text-right text-sm font-medium">
 																		<div className="flex items-center">
 																			<LinkComponent
-																				to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_USER}/${user.id}/${routeConstant.ROUTE_NAME_MAIN_USER_EDIT}`}
+																				to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_POST}/${post.id}/${routeConstant.ROUTE_NAME_MAIN_POST_EDIT}`}
 																				className="text-indigo-600 hover:text-indigo-900 mr-2"
 																			>
 																				<FaRegEdit className="h-5 w-5" />
@@ -218,7 +252,7 @@ const ListUserComponent: React.FC<Props> = () => {
 																			<button
 																				type="button"
 																				className="text-red-600 hover:text-red-900"
-																				onClick={() => onDeleteClicked(user.id)}
+																				onClick={() => onDeleteClicked(post.id)}
 																			>
 																				<FaRegTrashAlt className="h-5 w-5" />
 																			</button>
@@ -251,4 +285,4 @@ const ListUserComponent: React.FC<Props> = () => {
 	);
 };
 
-export default ListUserComponent;
+export default ListPostComponent;

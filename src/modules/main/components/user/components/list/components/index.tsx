@@ -152,7 +152,7 @@ const ListUserComponent: React.FC<Props> = () => {
 														{!data.length ? (
 															<tr>
 																<td colSpan={6} className="p-3 whitespace-nowrap text-center">
-																	Empty user
+																	Empty users
 																</td>
 															</tr>
 														) : (

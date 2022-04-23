@@ -1,10 +1,10 @@
 import { useRoutes } from 'react-router-dom';
-import UserRouter from './router';
+import PostRouter from './router';
 
 type Props = {};
 
-const UserComponent: React.FC<Props> = () => {
-	return <>{useRoutes(UserRouter)}</>;
+const PostComponent: React.FC<Props> = () => {
+	return <>{useRoutes(PostRouter)}</>;
 };
 
-export default UserComponent;
+export default PostComponent;

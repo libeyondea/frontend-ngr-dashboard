@@ -11,7 +11,7 @@ import NavLinkComponent from 'components/NavLink/components';
 import { selectAppSidebar } from 'store/app/selectors';
 import useAppSelector from 'hooks/useAppSelector';
 import { AiOutlineMenu } from 'react-icons/ai';
-import { FaChevronLeft, FaCog, FaEllipsisH, FaPlusCircle, FaRegListAlt, FaTachometerAlt, FaUsers } from 'react-icons/fa';
+import { FaBook, FaChevronLeft, FaCog, FaEllipsisH, FaPlusCircle, FaRegListAlt, FaTachometerAlt, FaUsers } from 'react-icons/fa';
 
 type Props = {};
 
@@ -125,6 +125,70 @@ const SidebarComponent: React.FC<Props> = () => {
 										)}
 									</Disclosure>
 								</li>
+
+								<li>
+									<Disclosure
+										defaultOpen={
+											!![
+												`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_POST}`,
+												`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_POST}/${routeConstant.ROUTE_NAME_MAIN_POST_NEW}`
+											]
+												.map((href) => href)
+												.includes(location.pathname)
+										}
+									>
+										{({ open }) => (
+											<>
+												<Disclosure.Button
+													className={classNames(
+														'inline-flex items-center w-full px-4 py-2 text-base transition duration-500 ease-in-out transform rounded-lg focus:shadow-outline hover:bg-gray-900 hover:text-white',
+														!![
+															`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_POST}`,
+															`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_POST}/${routeConstant.ROUTE_NAME_MAIN_POST_NEW}`
+														]
+															.map((href) => href)
+															.includes(location.pathname)
+															? 'bg-gray-900 text-white'
+															: 'text-gray-400'
+													)}
+												>
+													<FaBook className="w-6 h-6" />
+													<span className="ml-4">Posts</span>
+													<FaChevronLeft
+														className={classNames('w-6 h-6 ml-auto', {
+															'transform -rotate-90': open
+														})}
+													/>
+												</Disclosure.Button>
+												<Disclosure.Panel as="ul" className="space-y-4 mt-4">
+													<li>
+														<NavLinkComponent
+															to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_POST}`}
+															className="inline-flex items-center w-full pl-8 pr-4 py-2 text-base transition duration-500 ease-in-out transform rounded-lg focus:shadow-outline"
+															activeClassName="bg-gray-500 hover:bg-gray-500 font-bold text-white"
+															notActiveClassName="hover:bg-gray-900 hover:text-white text-gray-400"
+														>
+															<FaRegListAlt className="w-6 h-6" />
+															<span className="ml-4">List</span>
+														</NavLinkComponent>
+													</li>
+													<li>
+														<NavLinkComponent
+															to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_POST}/${routeConstant.ROUTE_NAME_MAIN_POST_NEW}`}
+															className="inline-flex items-center w-full pl-8 pr-4 py-2 text-base transition duration-500 ease-in-out transform rounded-lg focus:shadow-outline"
+															activeClassName="bg-gray-500 hover:bg-gray-500 font-bold text-white"
+															notActiveClassName="hover:bg-gray-900 hover:text-white text-gray-400"
+														>
+															<FaPlusCircle className="w-6 h-6" />
+															<span className="ml-4">New</span>
+														</NavLinkComponent>
+													</li>
+												</Disclosure.Panel>
+											</>
+										)}
+									</Disclosure>
+								</li>
+
 								<li>
 									<Disclosure
 										defaultOpen={
