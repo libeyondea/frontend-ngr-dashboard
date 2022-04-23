@@ -14,6 +14,7 @@ import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { useState } from 'react';
 import { CreateUserFormik } from 'models/user';
 import toastify from 'helpers/toastify';
+import { Tab } from '@headlessui/react';
 
 type Props = {};
 
@@ -21,9 +22,11 @@ const NewPostComponent: React.FC<Props> = () => {
 	const navigate = useNavigate();
 	const [isUploading, setUploading] = useState(false);
 	const [isCreating, setCreating] = useState(false);
+	const [isLang, setLang] = useState('vi');
 
-	const formik: FormikProps<CreateUserFormik> = useFormik<CreateUserFormik>({
+	const formik: FormikProps<any> = useFormik<any>({
 		initialValues: {
+			translations: [],
 			first_name: '',
 			last_name: '',
 			email: '',
@@ -94,6 +97,7 @@ const NewPostComponent: React.FC<Props> = () => {
 				.then((result) => {
 					setCreating(true);
 					const payload = {
+						translations: [],
 						first_name: values.first_name,
 						last_name: values.last_name,
 						email: values.email,
@@ -141,199 +145,299 @@ const NewPostComponent: React.FC<Props> = () => {
 					<CardComponent header="New user">
 						<form onSubmit={formik.handleSubmit}>
 							<div className="grid grid-cols-2 gap-4">
-								<div className="col-span-2 md:col-span-1">
-									<label htmlFor="first_name" className="inline-block font-medium text-gray-600 mb-1">
-										First name
-									</label>
-									<div className="relative">
-										<input
-											type="text"
-											placeholder="Enter first name"
-											className={classNames(
-												'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
-												{
-													'focus:ring-red-600 border-red-600':
-														formik.errors.first_name && formik.touched.first_name
-												}
-											)}
-											onChange={formik.handleChange}
-											onBlur={formik.handleBlur}
-											value={formik.values.first_name}
-											name="first_name"
-											id="first_name"
-										/>
+								<div className="col-span-2">
+									<div className="w-full">
+										<div className="max-w-md flex p-1 space-x-1 bg-blue-900/20 rounded-xl">
+											<button
+												type="button"
+												className={classNames(
+													'w-full py-2.5 text-sm leading-5 font-medium rounded-md',
+													'focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60',
+													isLang === 'vi'
+														? 'shadow bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 focus:ring-offset-purple-200 text-white transition ease-in duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2'
+														: 'text-gray-600 hover:bg-white/[0.12] hover:text-white'
+												)}
+												onClick={() => setLang('vi')}
+											>
+												Vietnamese
+											</button>
+											<button
+												type="button"
+												className={classNames(
+													'w-full py-2.5 text-sm leading-5 font-medium rounded-md',
+													'focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60',
+													isLang === 'en'
+														? 'shadow bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 focus:ring-offset-purple-200 text-white transition ease-in duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2'
+														: 'text-gray-600 hover:bg-white/[0.12] hover:text-white'
+												)}
+												onClick={() => setLang('en')}
+											>
+												English
+											</button>
+										</div>
+										<div className="mt-2">
+											<div
+												className={classNames('grid grid-cols-2 gap-4', {
+													hidden: isLang === 'vi'
+												})}
+											>
+												<div className="col-span-2 md:col-span-1">
+													<label
+														htmlFor="first_name"
+														className="inline-block font-medium text-gray-600 mb-1"
+													>
+														Title
+													</label>
+													<div className="relative">
+														<input
+															type="text"
+															placeholder="Enter first name"
+															className={classNames(
+																'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
+																{
+																	'focus:ring-red-600 border-red-600':
+																		formik.errors.first_name && formik.touched.first_name
+																}
+															)}
+															onChange={formik.handleChange}
+															onBlur={formik.handleBlur}
+															value={formik.values.first_name}
+															name="first_name"
+															id="first_name"
+														/>
+													</div>
+													{formik.errors.first_name && formik.touched.first_name && (
+														<div className="text-red-700 mt-1 text-sm">
+															{formik.errors.first_name}
+														</div>
+													)}
+												</div>
+												<div className="col-span-2 md:col-span-1">
+													<label
+														htmlFor="first_name"
+														className="inline-block font-medium text-gray-600 mb-1"
+													>
+														Slug
+													</label>
+													<div className="relative">
+														<input
+															type="text"
+															placeholder="Enter first name"
+															className={classNames(
+																'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
+																{
+																	'focus:ring-red-600 border-red-600':
+																		formik.errors.first_name && formik.touched.first_name
+																}
+															)}
+															onChange={formik.handleChange}
+															onBlur={formik.handleBlur}
+															value={formik.values.first_name}
+															name="first_name"
+															id="first_name"
+														/>
+													</div>
+													{formik.errors.first_name && formik.touched.first_name && (
+														<div className="text-red-700 mt-1 text-sm">
+															{formik.errors.first_name}
+														</div>
+													)}
+												</div>
+												<div className="col-span-2">
+													<label
+														htmlFor="first_name"
+														className="inline-block font-medium text-gray-600 mb-1"
+													>
+														Excerpt
+													</label>
+													<div className="relative">
+														<textarea
+															rows={4}
+															placeholder="Enter first name"
+															className={classNames(
+																'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
+																{
+																	'focus:ring-red-600 border-red-600':
+																		formik.errors.first_name && formik.touched.first_name
+																}
+															)}
+															onChange={formik.handleChange}
+															onBlur={formik.handleBlur}
+															value={formik.values.first_name}
+															name="first_name"
+															id="first_name"
+														></textarea>
+													</div>
+													{formik.errors.first_name && formik.touched.first_name && (
+														<div className="text-red-700 mt-1 text-sm">
+															{formik.errors.first_name}
+														</div>
+													)}
+												</div>
+												<div className="col-span-2">
+													<label
+														htmlFor="first_name"
+														className="inline-block font-medium text-gray-600 mb-1"
+													>
+														Content
+													</label>
+													<div className="relative">
+														<textarea
+															rows={8}
+															placeholder="Enter first name"
+															className={classNames(
+																'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
+																{
+																	'focus:ring-red-600 border-red-600':
+																		formik.errors.first_name && formik.touched.first_name
+																}
+															)}
+															onChange={formik.handleChange}
+															onBlur={formik.handleBlur}
+															value={formik.values.first_name}
+															name="first_name"
+															id="first_name"
+														></textarea>
+													</div>
+													{formik.errors.first_name && formik.touched.first_name && (
+														<div className="text-red-700 mt-1 text-sm">
+															{formik.errors.first_name}
+														</div>
+													)}
+												</div>
+											</div>
+											<div
+												className={classNames('grid grid-cols-2 gap-4', {
+													hidden: isLang === 'en'
+												})}
+											>
+												<div className="col-span-2 md:col-span-1">
+													<label
+														htmlFor="first_name"
+														className="inline-block font-medium text-gray-600 mb-1"
+													>
+														Title
+													</label>
+													<div className="relative">
+														<input
+															type="text"
+															placeholder="Enter first name"
+															className={classNames(
+																'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
+																{
+																	'focus:ring-red-600 border-red-600':
+																		formik.errors.first_name && formik.touched.first_name
+																}
+															)}
+															onChange={formik.handleChange}
+															onBlur={formik.handleBlur}
+															value={formik.values.first_name}
+															name="first_name"
+															id="first_name"
+														/>
+													</div>
+													{formik.errors.first_name && formik.touched.first_name && (
+														<div className="text-red-700 mt-1 text-sm">
+															{formik.errors.first_name}
+														</div>
+													)}
+												</div>
+												<div className="col-span-2 md:col-span-1">
+													<label
+														htmlFor="first_name"
+														className="inline-block font-medium text-gray-600 mb-1"
+													>
+														Slug
+													</label>
+													<div className="relative">
+														<input
+															type="text"
+															placeholder="Enter first name"
+															className={classNames(
+																'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
+																{
+																	'focus:ring-red-600 border-red-600':
+																		formik.errors.first_name && formik.touched.first_name
+																}
+															)}
+															onChange={formik.handleChange}
+															onBlur={formik.handleBlur}
+															value={formik.values.first_name}
+															name="first_name"
+															id="first_name"
+														/>
+													</div>
+													{formik.errors.first_name && formik.touched.first_name && (
+														<div className="text-red-700 mt-1 text-sm">
+															{formik.errors.first_name}
+														</div>
+													)}
+												</div>
+												<div className="col-span-2">
+													<label
+														htmlFor="first_name"
+														className="inline-block font-medium text-gray-600 mb-1"
+													>
+														Excerpt
+													</label>
+													<div className="relative">
+														<textarea
+															rows={4}
+															placeholder="Enter first name"
+															className={classNames(
+																'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
+																{
+																	'focus:ring-red-600 border-red-600':
+																		formik.errors.first_name && formik.touched.first_name
+																}
+															)}
+															onChange={formik.handleChange}
+															onBlur={formik.handleBlur}
+															value={formik.values.first_name}
+															name="first_name"
+															id="first_name"
+														></textarea>
+													</div>
+													{formik.errors.first_name && formik.touched.first_name && (
+														<div className="text-red-700 mt-1 text-sm">
+															{formik.errors.first_name}
+														</div>
+													)}
+												</div>
+												<div className="col-span-2">
+													<label
+														htmlFor="first_name"
+														className="inline-block font-medium text-gray-600 mb-1"
+													>
+														Content
+													</label>
+													<div className="relative">
+														<textarea
+															rows={8}
+															placeholder="Enter first name"
+															className={classNames(
+																'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
+																{
+																	'focus:ring-red-600 border-red-600':
+																		formik.errors.first_name && formik.touched.first_name
+																}
+															)}
+															onChange={formik.handleChange}
+															onBlur={formik.handleBlur}
+															value={formik.values.first_name}
+															name="first_name"
+															id="first_name"
+														></textarea>
+													</div>
+													{formik.errors.first_name && formik.touched.first_name && (
+														<div className="text-red-700 mt-1 text-sm">
+															{formik.errors.first_name}
+														</div>
+													)}
+												</div>
+											</div>
+										</div>
 									</div>
-									{formik.errors.first_name && formik.touched.first_name && (
-										<div className="text-red-700 mt-1 text-sm">{formik.errors.first_name}</div>
-									)}
-								</div>
-								<div className="col-span-2 md:col-span-1">
-									<label htmlFor="last_name" className="inline-block font-medium text-gray-600 mb-1">
-										Last name
-									</label>
-									<div className="relative">
-										<input
-											type="text"
-											placeholder="Enter last name"
-											className={classNames(
-												'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
-												{
-													'focus:ring-red-600 border-red-600':
-														formik.errors.last_name && formik.touched.last_name
-												}
-											)}
-											onChange={formik.handleChange}
-											onBlur={formik.handleBlur}
-											value={formik.values.last_name}
-											name="last_name"
-											id="last_name"
-										/>
-									</div>
-									{formik.errors.last_name && formik.touched.last_name && (
-										<div className="text-red-700 mt-1 text-sm">{formik.errors.last_name}</div>
-									)}
-								</div>
-								<div className="col-span-2 md:col-span-1">
-									<label htmlFor="user_name" className="inline-block font-medium text-gray-600 mb-1">
-										User name
-									</label>
-									<div className="relative">
-										<input
-											type="text"
-											placeholder="Enter user name"
-											className={classNames(
-												'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
-												{
-													'focus:ring-red-600 border-red-600':
-														formik.errors.user_name && formik.touched.user_name
-												}
-											)}
-											onChange={formik.handleChange}
-											onBlur={formik.handleBlur}
-											value={formik.values.user_name}
-											name="user_name"
-											id="user_name"
-										/>
-									</div>
-									{formik.errors.user_name && formik.touched.user_name && (
-										<div className="text-red-700 mt-1 text-sm">{formik.errors.user_name}</div>
-									)}
-								</div>
-								<div className="col-span-2 md:col-span-1">
-									<label htmlFor="email" className="inline-block font-medium text-gray-600 mb-1">
-										Email
-									</label>
-									<div className="relative">
-										<input
-											type="text"
-											placeholder="Enter email"
-											className={classNames(
-												'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
-												{
-													'focus:ring-red-600 border-red-600':
-														formik.errors.email && formik.touched.email
-												}
-											)}
-											onChange={formik.handleChange}
-											onBlur={formik.handleBlur}
-											value={formik.values.email}
-											name="email"
-											id="email"
-										/>
-									</div>
-									{formik.errors.email && formik.touched.email && (
-										<div className="text-red-700 mt-1 text-sm">{formik.errors.email}</div>
-									)}
-								</div>
-								<div className="col-span-2 md:col-span-1">
-									<label htmlFor="password" className="inline-block font-medium text-gray-600 mb-1">
-										Password
-									</label>
-									<div className="relative">
-										<input
-											type="password"
-											placeholder="Enter password"
-											className={classNames(
-												'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
-												{
-													'focus:ring-red-600 border-red-600':
-														formik.errors.password && formik.touched.password
-												}
-											)}
-											onChange={formik.handleChange}
-											onBlur={formik.handleBlur}
-											value={formik.values.password}
-											name="password"
-											id="password"
-										/>
-									</div>
-									{formik.errors.password && formik.touched.password && (
-										<div className="text-red-700 mt-1 text-sm">{formik.errors.password}</div>
-									)}
-								</div>
-								<div className="col-span-2 md:col-span-1">
-									<label
-										htmlFor="password_confirmation"
-										className="inline-block font-medium text-gray-600 mb-1"
-									>
-										Password confirmation
-									</label>
-									<div className="relative">
-										<input
-											type="password"
-											placeholder="Enter password confirmation"
-											className={classNames(
-												'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
-												{
-													'focus:ring-red-600 border-red-600':
-														formik.errors.password_confirmation &&
-														formik.touched.password_confirmation
-												}
-											)}
-											onChange={formik.handleChange}
-											onBlur={formik.handleBlur}
-											value={formik.values.password_confirmation}
-											name="password_confirmation"
-											id="password_confirmation"
-										/>
-									</div>
-									{formik.errors.password_confirmation && formik.touched.password_confirmation && (
-										<div className="text-red-700 mt-1 text-sm">{formik.errors.password_confirmation}</div>
-									)}
-								</div>
-								<div className="col-span-2 md:col-span-1">
-									<label htmlFor="role" className="inline-block font-medium text-gray-600 mb-1">
-										Role
-									</label>
-									<div className="relative">
-										<select
-											className={classNames(
-												'capitalize rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
-												{
-													'focus:ring-red-600 border-red-600': formik.errors.role && formik.touched.role
-												}
-											)}
-											onChange={formik.handleChange}
-											onBlur={formik.handleBlur}
-											value={formik.values.role}
-											name="role"
-											id="role"
-										>
-											{[
-												userConstant.USER_ROLE_VIEWER,
-												userConstant.USER_ROLE_MODERATOR,
-												userConstant.USER_ROLE_ADMIN,
-												userConstant.USER_ROLE_OWNER
-											].map((role, index) => (
-												<option value={role} key={index}>
-													{role}
-												</option>
-											))}
-										</select>
-									</div>
-									{formik.errors.role && formik.touched.role && (
-										<div className="text-red-700 mt-1 text-sm">{formik.errors.role}</div>
-									)}
 								</div>
 								<div className="col-span-2 md:col-span-1">
 									<label htmlFor="status" className="inline-block font-medium text-gray-600 mb-1">

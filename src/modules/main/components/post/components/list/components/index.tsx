@@ -3,6 +3,7 @@ import CardComponent from 'components/Card/components';
 import LinkComponent from 'components/Link/components';
 import time from 'helpers/time';
 import { Post } from 'models/post';
+import { Category } from 'models/category';
 import { useEffect, useState } from 'react';
 import postService from 'services/postService';
 import * as routeConstant from 'constants/route';
@@ -95,17 +96,17 @@ const ListPostComponent: React.FC<Props> = () => {
 			});
 	}, [pagination.limit, pagination.page]);
 
-	const recursiveCategories = (categories: any) => {
-		return categories.map((category: any) => (
-			<>
-				{category.translations.map((translation: any) => (
+	const recursiveCategories = (categories: Category[]) => {
+		return categories.map((category) => (
+			<div key={category.id}>
+				{category.translations.map((translation) => (
 					<div key={translation.id}>
 						<span className="uppercase font-semibold text-blue-600 mr-1">{translation.language.code}:</span>
 						<span>{translation.name}</span>
 					</div>
 				))}
 				<div className="ml-4">{category.children && recursiveCategories(category.children)}</div>
-			</>
+			</div>
 		));
 	};
 
