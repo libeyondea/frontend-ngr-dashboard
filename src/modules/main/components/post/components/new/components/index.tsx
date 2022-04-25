@@ -27,17 +27,6 @@ const NewPostComponent: React.FC<Props> = () => {
 	const navigate = useNavigate();
 	const [isUploading, setUploading] = useState(false);
 	const [isCreating, setCreating] = useState(false);
-	const [test, setTest] = useState<readonly CreateTag[]>([]);
-
-	/* interface State {
-		readonly inputValue: string;
-		readonly value: readonly Option[];
-	} */
-
-	/* const [test1, setTest1] = useState<State>({
-		inputValue: '',
-		value: []
-	}); */
 
 	const [state, setState] = useState<{
 		data: {
@@ -212,43 +201,6 @@ const NewPostComponent: React.FC<Props> = () => {
 		));
 	};
 
-	/* interface Option {
-		readonly label: string;
-		readonly value: string;
-	}
-
-	const createOption = (label: string) => ({
-		label,
-		value: label
-	});
-
-	const handleChange = (value: OnChangeValue<Option, true>, actionMeta: ActionMeta<Option>) => {
-		console.group('Value Changed');
-		console.log(value);
-		console.log(`action: ${actionMeta.action}`);
-		console.groupEnd();
-		setTest1((prevState) => ({ ...prevState, value }));
-	};
-	const handleInputChange = (inputValue: string) => {
-		setTest1((prevState) => ({ ...prevState, inputValue }));
-	};
-	const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
-		const { inputValue, value } = test1;
-		if (!inputValue) return;
-		switch (event.key) {
-			case 'Enter':
-			case 'Tab':
-				console.group('Value Added');
-				console.log(value);
-				console.groupEnd();
-				setTest1({
-					inputValue: '',
-					value: [...value, createOption(inputValue)]
-				});
-				event.preventDefault();
-		}
-	}; */
-
 	return (
 		<>
 			<BreadcrumbComponent className="mb-4">New user</BreadcrumbComponent>
@@ -404,17 +356,6 @@ const NewPostComponent: React.FC<Props> = () => {
 										Tags
 									</label>
 									<div className="relative">
-										{/* <CreatableSelect
-											inputValue={test1.inputValue}
-											isClearable
-											isMulti
-											menuIsOpen={false}
-											onChange={handleChange}
-											onInputChange={handleInputChange}
-											onKeyDown={handleKeyDown}
-											placeholder="Type something and press enter..."
-											value={test1.value}
-										/> */}
 										<CreatableSelect
 											id="tags"
 											name="tags"
