@@ -160,14 +160,14 @@ const ListUserComponent: React.FC<Props> = () => {
 																<tr key={user.id}>
 																	<td className="p-3 whitespace-nowrap">
 																		<div className="flex items-center">
-																			<div className="flex-shrink-0 h-10 w-10">
+																			<div className="flex-shrink-0 h-10 w-10 mr-4">
 																				<img
 																					className="h-10 w-10 rounded-full"
 																					src={user.avatar_url}
 																					alt={user.user_name}
 																				/>
 																			</div>
-																			<div className="ml-4">
+																			<div>
 																				<div className="text-sm font-medium text-gray-900">
 																					{user.first_name} {user.last_name} (
 																					{user.user_name})

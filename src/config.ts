@@ -23,6 +23,8 @@ const config = {
 
 			CRUD_POST: '/posts',
 
+			CRUD_CATEGORY: '/categories',
+
 			UPLOAD_IMAGE: '/images/upload'
 		}
 	},

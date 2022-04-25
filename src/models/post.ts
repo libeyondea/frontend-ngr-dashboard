@@ -1,31 +1,13 @@
 import { Category } from './category';
-import { Language } from './language';
-import { Tag } from './tag';
+import { CreateTag, Tag } from './tag';
 import { User } from './user';
-
-export interface Translations {
-	id: number;
-	post_id: number;
-	language: Language;
-	title: string;
-	slug: string;
-	excerpt: string;
-	content: string;
-	created_at: string | null;
-	updated_at: string | null;
-}
-
-export interface CreatePostTranslations {
-	title: string;
-	slug: string;
-	excerpt: string;
-	content: string;
-	language_id: number;
-}
 
 export interface Post {
 	id: number;
-	translations: Translations[];
+	title: string;
+	slug: string;
+	excerpt: string;
+	content: string;
 	image_url: string;
 	status: string;
 	user: User;
@@ -36,11 +18,20 @@ export interface Post {
 }
 
 export interface CreatePost {
+	title: string;
+	slug: string;
+	excerpt: string;
+	content: string;
 	image?: string | null;
 	status: string;
 	category_id: number;
-	translations: CreatePostTranslations[];
-	tags: Array<{
-		name: string;
-	}>;
+	tags: readonly CreateTag[];
 }
+
+export interface UpdatePost extends CreatePost {}
+
+export interface CreatePostFormik extends Omit<CreatePost, 'image'> {
+	image: File | null;
+}
+
+export interface UpdateUserFormik extends CreatePostFormik {}

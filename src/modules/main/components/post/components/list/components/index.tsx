@@ -99,12 +99,7 @@ const ListPostComponent: React.FC<Props> = () => {
 	const recursiveCategories = (categories: Category[]) => {
 		return categories.map((category) => (
 			<div key={category.id}>
-				{category.translations.map((translation) => (
-					<div key={translation.id}>
-						<span className="uppercase font-semibold text-blue-600 mr-1">{translation.language.code}:</span>
-						<span>{translation.name}</span>
-					</div>
-				))}
+				<div>{category.name}</div>
 				<div className="ml-4">{category.children && recursiveCategories(category.children)}</div>
 			</div>
 		));
@@ -190,28 +185,14 @@ const ListPostComponent: React.FC<Props> = () => {
 																				/>
 																			</div> */}
 																			<div>
-																				{post.translations.map((translation) => (
-																					<div key={translation.id}>
-																						<span className="uppercase font-semibold text-blue-600 mr-1">
-																							{translation.language.code}:
-																						</span>
-																						<span className="font-semibold text-gray-900">
-																							{translation.title}
-																						</span>
-																					</div>
-																				))}
+																				<div className="text-sm font-medium text-gray-900">
+																					{post.title}
+																				</div>
 																			</div>
 																		</div>
 																	</td>
 																	<td className="p-3 whitespace-normal text-sm text-gray-500">
-																		{post.translations.map((translation) => (
-																			<div key={translation.id}>
-																				<span className="uppercase font-semibold text-blue-600 mr-1">
-																					{translation.language.code}:
-																				</span>
-																				<span>{translation.excerpt}</span>
-																			</div>
-																		))}
+																		{post.excerpt}
 																	</td>
 																	<td className="p-3 whitespace-nowrap">
 																		<span
