@@ -17,6 +17,7 @@ import { Category } from 'models/category';
 import CreatableSelect from 'react-select/creatable';
 import postService from 'services/postService';
 import Loadingomponent from 'components/Loading/components';
+import _ from 'lodash';
 
 type Props = {};
 
@@ -433,7 +434,11 @@ const EditPostComponent: React.FC<Props> = () => {
 											/>
 										</div>
 										{formik.errors.tags && formik.touched.tags && (
-											<div className="text-red-700 mt-1 text-sm">{formik.errors.tags}</div>
+											<div className="text-red-700 mt-1 text-sm">
+												{_.isString(formik.errors.tags) && formik.errors.tags}
+												{_.isArray(formik.errors.tags) &&
+													formik.errors.tags.map((tag) => (_.isString(tag) ? tag : tag?.name))}
+											</div>
 										)}
 									</div>
 									<div className="col-span-2 md:col-span-1">

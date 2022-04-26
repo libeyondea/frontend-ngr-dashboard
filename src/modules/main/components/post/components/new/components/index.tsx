@@ -10,17 +10,26 @@ import classNames from 'classnames';
 import ImageInput from 'components/ImageInput/components';
 import imageService from 'services/imageService';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useRef } from 'react';
 import toastify from 'helpers/toastify';
 import { CreatePostFormik } from 'models/post';
 import categoryService from 'services/categoryService';
 import { Category } from 'models/category';
 import CreatableSelect from 'react-select/creatable';
 import postService from 'services/postService';
+import _ from 'lodash';
+import JoditEditor from 'jodit-react';
+import { RichTextEditor } from '@mantine/rte';
 
 type Props = {};
 
 const NewPostComponent: React.FC<Props> = () => {
+	const editor = useRef(null);
+	const config = {
+		readonly: false,
+		disablePlugins: 'fullsize'
+	};
+
 	const navigate = useNavigate();
 	const [isUploading, setUploading] = useState(false);
 	const [isCreating, setCreating] = useState(false);
@@ -112,8 +121,8 @@ const NewPostComponent: React.FC<Props> = () => {
 				.max(66, 'The tags must not be greater than 20.')
 				.of(
 					Yup.object().shape({
-						name: Yup.string().required().max(3, 'The tag name must not be greater than 66 characters.'),
-						slug: Yup.string().required().max(3, 'The tag slug must not be greater than 66 characters.')
+						name: Yup.string().required().max(66, 'The tag name must not be greater than 66 characters.'),
+						slug: Yup.string().required().max(66, 'The tag slug must not be greater than 66 characters.')
 					})
 				),
 			status: Yup.string()
@@ -307,7 +316,9 @@ const NewPostComponent: React.FC<Props> = () => {
 										Content
 									</label>
 									<div className="relative">
-										<textarea
+										
+										<RichTextEditor value={formik.values.content} onChange={(value) => formik.setFieldValue('content', value)} />
+										{/* <textarea
 											rows={8}
 											placeholder="Enter content"
 											className={classNames(
@@ -322,7 +333,7 @@ const NewPostComponent: React.FC<Props> = () => {
 											value={formik.values.content}
 											name="content"
 											id="content"
-										></textarea>
+										></textarea> */}
 									</div>
 									{formik.errors.content && formik.touched.content && (
 										<div className="text-red-700 mt-1 text-sm">{formik.errors.content}</div>
@@ -388,7 +399,9 @@ const NewPostComponent: React.FC<Props> = () => {
 									</div>
 									{formik.errors.tags && formik.touched.tags && (
 										<div className="text-red-700 mt-1 text-sm">
-											{/* {formik.errors.tags.length ? formik.errors?.tags[0]?.name : formik.errors.tags} */}
+											{_.isString(formik.errors.tags) && formik.errors.tags}
+											{_.isArray(formik.errors.tags) &&
+												formik.errors.tags.map((tag) => (_.isString(tag) ? tag : tag?.name))}
 										</div>
 									)}
 								</div>
