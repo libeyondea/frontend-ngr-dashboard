@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import ImageInput from 'components/ImageInput/components';
 import imageService from 'services/imageService';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import { Fragment, useEffect, useState, useRef } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import toastify from 'helpers/toastify';
 import { CreatePostFormik } from 'models/post';
 import categoryService from 'services/categoryService';
@@ -24,12 +24,6 @@ import { RichTextEditor } from '@mantine/rte';
 type Props = {};
 
 const NewPostComponent: React.FC<Props> = () => {
-	const editor = useRef(null);
-	const config = {
-		readonly: false,
-		disablePlugins: 'fullsize'
-	};
-
 	const navigate = useNavigate();
 	const [isUploading, setUploading] = useState(false);
 	const [isCreating, setCreating] = useState(false);
@@ -200,17 +194,15 @@ const NewPostComponent: React.FC<Props> = () => {
 		}
 	});
 
-	const handleImageUpload = (file: File): Promise<string> =>
-		new Promise((resolve, reject) => {
-			const formData = new FormData();
-			formData.append('image', file);
-
-			fetch('https://api.imgbb.com/1/upload?key=api_key', {
-				method: 'POST',
-				body: formData
-			})
-				.then((response) => response.json())
-				.then((result) => resolve(result.data.url))
+	const handleImageUpload = (image: File): Promise<string> =>
+		new Promise<string>((resolve, reject) => {
+			imageService
+				.upload({
+					image: image
+				})
+				.then((response) => {
+					return resolve(response.data.data.image);
+				})
 				.catch(() => reject(new Error('Upload failed')));
 		});
 
@@ -335,6 +327,7 @@ const NewPostComponent: React.FC<Props> = () => {
 											value={formik.values.content}
 											onChange={(value) => formik.setFieldValue('content', value)}
 											onBlur={() => formik.setFieldTouched('content', true)}
+											onImageUpload={handleImageUpload}
 										/>
 										{/* <textarea
 											rows={8}
