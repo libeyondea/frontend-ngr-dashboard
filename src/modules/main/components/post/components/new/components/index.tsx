@@ -200,6 +200,20 @@ const NewPostComponent: React.FC<Props> = () => {
 		}
 	});
 
+	const handleImageUpload = (file: File): Promise<string> =>
+		new Promise((resolve, reject) => {
+			const formData = new FormData();
+			formData.append('image', file);
+
+			fetch('https://api.imgbb.com/1/upload?key=api_key', {
+				method: 'POST',
+				body: formData
+			})
+				.then((response) => response.json())
+				.then((result) => resolve(result.data.url))
+				.catch(() => reject(new Error('Upload failed')));
+		});
+
 	const recursiveCategories = (categories: Category[]) => {
 		return categories.map((category) => (
 			<Fragment key={category.id}>
@@ -316,8 +330,12 @@ const NewPostComponent: React.FC<Props> = () => {
 										Content
 									</label>
 									<div className="relative">
-										
-										<RichTextEditor value={formik.values.content} onChange={(value) => formik.setFieldValue('content', value)} />
+										<RichTextEditor
+											placeholder="Enter content"
+											value={formik.values.content}
+											onChange={(value) => formik.setFieldValue('content', value)}
+											onBlur={() => formik.setFieldTouched('content', true)}
+										/>
 										{/* <textarea
 											rows={8}
 											placeholder="Enter content"
