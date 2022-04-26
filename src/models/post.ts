@@ -1,5 +1,4 @@
 import { Category } from './category';
-import { CreateTag, Tag } from './tag';
 import { User } from './user';
 
 export interface Post {
@@ -11,7 +10,11 @@ export interface Post {
 	image_url: string;
 	status: string;
 	user: User;
-	tags: Tag[];
+	tags: Array<{
+		readonly name: string;
+		readonly slug: string;
+	}>;
+	category_id: number;
 	categories: Category[];
 	created_at: string | null;
 	updated_at: string | null;
@@ -25,7 +28,10 @@ export interface CreatePost {
 	image?: string | null;
 	status: string;
 	category_id: number;
-	tags: readonly CreateTag[];
+	tags: Array<{
+		readonly name: string;
+		readonly slug: string;
+	}>;
 }
 
 export interface UpdatePost extends CreatePost {}

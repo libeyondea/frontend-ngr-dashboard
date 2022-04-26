@@ -4,22 +4,19 @@ import CardComponent from 'components/Card/components';
 import { FormikProps, useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import * as routeConstant from 'constants/route';
-import * as userConstant from 'constants/user';
 import * as postConstant from 'constants/post';
 import * as Yup from 'yup';
-import userService from 'services/userService';
 import classNames from 'classnames';
 import ImageInput from 'components/ImageInput/components';
 import imageService from 'services/imageService';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import { Fragment, useEffect, useState, Component, KeyboardEventHandler } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import toastify from 'helpers/toastify';
 import { CreatePostFormik } from 'models/post';
 import categoryService from 'services/categoryService';
 import { Category } from 'models/category';
 import CreatableSelect from 'react-select/creatable';
-import { ActionMeta, OnChangeValue } from 'react-select';
-import { CreateTag } from 'models/tag';
+import postService from 'services/postService';
 
 type Props = {};
 
@@ -88,6 +85,7 @@ const NewPostComponent: React.FC<Props> = () => {
 	}, []);
 
 	const formik: FormikProps<CreatePostFormik> = useFormik<CreatePostFormik>({
+		enableReinitialize: true,
 		initialValues: {
 			title: '',
 			slug: '',
@@ -107,16 +105,18 @@ const NewPostComponent: React.FC<Props> = () => {
 			content: Yup.string()
 				.required('The content is required.')
 				.max(60000, 'The content must not be greater than 60000 characters.'),
-			category_id: Yup.number().required('The category is required.'),
+			category_id: Yup.number().positive('The category must be select').required('The category is required.'),
 			tags: Yup.array()
 				.required('The tags is required.')
 				.min(1, 'The tags must not be less than 1.')
-				.max(66, 'The tags must not be greater than 20.'),
-			/* .of(
+				.max(66, 'The tags must not be greater than 20.')
+				.of(
 					Yup.object().shape({
-						name: Yup.string().required().max(66, 'The tag name must not be greater than 66 characters.')
+						name: Yup.string().required().max(3, 'The tag name must not be greater than 66 characters.'),
+						slug: Yup.string().required().max(3, 'The tag slug must not be greater than 66 characters.')
 					})
-				) */ status: Yup.string()
+				),
+			status: Yup.string()
 				.required('The status is required.')
 				.oneOf(
 					[
@@ -130,7 +130,7 @@ const NewPostComponent: React.FC<Props> = () => {
 		}),
 		onSubmit: (values, { setErrors }) => {
 			console.log(values);
-			/* new Promise<{ image?: string }>((resolve, reject) => {
+			new Promise<{ image?: string }>((resolve, reject) => {
 				if (!values.image) {
 					return resolve({});
 				}
@@ -152,23 +152,22 @@ const NewPostComponent: React.FC<Props> = () => {
 				.then((result) => {
 					setCreating(true);
 					const payload = {
-						translations: [],
-						first_name: values.first_name,
-						last_name: values.last_name,
-						email: values.email,
-						user_name: values.user_name,
-						password: values.password,
-						role: values.role,
+						title: values.title,
+						slug: values.slug,
+						excerpt: values.excerpt,
+						content: values.content,
+						category_id: values.category_id,
+						tags: values.tags,
 						status: values.status,
 						...(result.image && {
-							avatar: result.image
+							image: result.image
 						})
 					};
-					userService
+					postService
 						.create(payload)
 						.then((response) => {
 							toastify.success('Create user success');
-							navigate(`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_USER}`);
+							navigate(`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_POST}`);
 						})
 						.catch((error) => {
 							if (axios.isAxiosError(error)) {
@@ -188,7 +187,7 @@ const NewPostComponent: React.FC<Props> = () => {
 						}
 					}
 				})
-				.finally(() => {}); */
+				.finally(() => {});
 		}
 	});
 
@@ -209,6 +208,23 @@ const NewPostComponent: React.FC<Props> = () => {
 					<CardComponent header="New user">
 						<form onSubmit={formik.handleSubmit}>
 							<div className="grid grid-cols-2 gap-4">
+								<div className="col-span-2">
+									<label htmlFor="image" className="inline-block font-medium text-gray-600 mb-1">
+										Image
+									</label>
+									<div className="relative">
+										<ImageInput
+											name="image"
+											id="image"
+											onChangeCustom={formik.setFieldValue}
+											onBlurCustom={formik.setFieldTouched}
+											isLarge
+										/>
+									</div>
+									{formik.errors.image && formik.touched.image && (
+										<div className="text-red-700 mt-1 text-sm">{formik.errors.image}</div>
+									)}
+								</div>
 								<div className="col-span-2 md:col-span-1">
 									<label htmlFor="title" className="inline-block font-medium text-gray-600 mb-1">
 										Title
@@ -304,7 +320,7 @@ const NewPostComponent: React.FC<Props> = () => {
 											onChange={formik.handleChange}
 											onBlur={formik.handleBlur}
 											value={formik.values.content}
-											name="v"
+											name="content"
 											id="content"
 										></textarea>
 									</div>
@@ -312,7 +328,6 @@ const NewPostComponent: React.FC<Props> = () => {
 										<div className="text-red-700 mt-1 text-sm">{formik.errors.content}</div>
 									)}
 								</div>
-
 								<div className="col-span-2 md:col-span-1">
 									<label htmlFor="category_id" className="inline-block font-medium text-gray-600 mb-1">
 										Category
@@ -338,12 +353,10 @@ const NewPostComponent: React.FC<Props> = () => {
 											) : !state.data.categories.length ? (
 												<option value={0}>Empty</option>
 											) : (
-												/* state.data.categories.map((category) => (
-													<option value={category.id} key={category.id}>
-														{category.name}
-													</option>
-												)) */
-												recursiveCategories(state.data.categories)
+												<Fragment>
+													<option value={0}>---Select---</option>
+													{recursiveCategories(state.data.categories)}
+												</Fragment>
 											)}
 										</select>
 									</div>
@@ -362,26 +375,23 @@ const NewPostComponent: React.FC<Props> = () => {
 											isClearable
 											isMulti
 											placeholder="Choose tags"
-											onChange={(value: OnChangeValue<CreateTag, true>) => {
-												console.log(value);
-												formik.setFieldValue('tags', value);
-											}}
-											onInputChange={(inputValue: string) => {
-												console.log('inputValue', inputValue);
-											}}
+											onChange={(value) => formik.setFieldValue('tags', value)}
 											onBlur={() => formik.setFieldTouched('tags', true)}
 											value={formik.values.tags}
-											/* getNewOptionData={(inputValue, optionLabel) => ({
-												id: inputValue,
-												name: optionLabel
-											})} */
+											getNewOptionData={(inputValue, optionLabel) => ({
+												name: inputValue,
+												slug: inputValue
+											})}
+											getOptionLabel={(option) => option.name}
+											getOptionValue={(option) => option.slug}
 										/>
 									</div>
 									{formik.errors.tags && formik.touched.tags && (
-										<div className="text-red-700 mt-1 text-sm">{formik.errors.tags}</div>
+										<div className="text-red-700 mt-1 text-sm">
+											{formik.errors.tags.length ? formik.errors?.tags[0]?.name : formik.errors.tags}
+										</div>
 									)}
 								</div>
-
 								<div className="col-span-2 md:col-span-1">
 									<label htmlFor="status" className="inline-block font-medium text-gray-600 mb-1">
 										Status
@@ -415,22 +425,6 @@ const NewPostComponent: React.FC<Props> = () => {
 									</div>
 									{formik.errors.status && formik.touched.status && (
 										<div className="text-red-700 mt-1 text-sm">{formik.errors.status}</div>
-									)}
-								</div>
-								<div className="col-span-2 md:col-span-1">
-									<label htmlFor="image" className="inline-block font-medium text-gray-600 mb-1">
-										Image
-									</label>
-									<div className="relative">
-										<ImageInput
-											name="image"
-											id="image"
-											onChangeCustom={formik.setFieldValue}
-											onBlurCustom={formik.setFieldTouched}
-										/>
-									</div>
-									{formik.errors.image && formik.touched.image && (
-										<div className="text-red-700 mt-1 text-sm">{formik.errors.image}</div>
 									)}
 								</div>
 								<div className="col-span-2">

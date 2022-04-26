@@ -5,8 +5,3 @@ export interface Tag {
 	created_at: string | null;
 	updated_at: string | null;
 }
-
-export interface CreateTag {
-	readonly id: string;
-	readonly name: string;
-}

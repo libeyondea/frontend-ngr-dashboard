@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import ImageComponent from 'components/Image/components';
 import { useState } from 'react';
 
@@ -6,9 +7,10 @@ interface Props extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLIn
 	onBlurCustom: (field: string, isTouched?: boolean, shouldValidate?: boolean) => void;
 	name: string;
 	imgUrl?: string;
+	isLarge?: boolean;
 }
 
-const ImageInput: React.FC<Props> = ({ onChangeCustom, onBlurCustom, name, imgUrl, ...props }) => {
+const ImageInput: React.FC<Props> = ({ onChangeCustom, onBlurCustom, name, imgUrl, isLarge = false, ...props }) => {
 	const [previewImg, setPreviewImg] = useState(imgUrl || '');
 
 	const onChangeFile = (
@@ -35,7 +37,12 @@ const ImageInput: React.FC<Props> = ({ onChangeCustom, onBlurCustom, name, imgUr
 	return (
 		<div className="flex items-start">
 			{previewImg && (
-				<span className="mr-4 inline-block h-20 w-20 rounded-full overflow-hidden">
+				<span
+					className={classNames('mr-4 inline-block overflow-hidden', {
+						'h-40 w-80': isLarge,
+						'rounded-full h-20 w-20': !isLarge
+					})}
+				>
 					<ImageComponent src={previewImg} className="h-full w-full" />
 				</span>
 			)}
