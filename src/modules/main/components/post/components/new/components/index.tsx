@@ -388,7 +388,7 @@ const NewPostComponent: React.FC<Props> = () => {
 									</div>
 									{formik.errors.tags && formik.touched.tags && (
 										<div className="text-red-700 mt-1 text-sm">
-											{formik.errors.tags.length ? formik.errors?.tags[0]?.name : formik.errors.tags}
+											{/* {formik.errors.tags.length ? formik.errors?.tags[0]?.name : formik.errors.tags} */}
 										</div>
 									)}
 								</div>
