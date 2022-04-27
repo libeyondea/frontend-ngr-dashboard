@@ -26,3 +26,29 @@
 		}
 	}
 }
+
+.rich-text-editor {
+	min-height: 30rem;
+	.ql-tooltip {
+		left: 0 !important;
+		right: 0 !important;
+		top: 0 !important;
+		padding: 5px 5px !important;
+		input {
+			height: 30px !important;
+			margin-right: 5px !important;
+		}
+	}
+}
+
+.jodit-react-container {
+	.jodit_sticky {
+		& > .jodit-toolbar__box {
+			top: 56px !important;
+		}
+	}
+	.jodit-workplace {
+		background-color: #fff;
+		@apply prose prose-slate lg:prose-lg min-w-full;
+	}
+}

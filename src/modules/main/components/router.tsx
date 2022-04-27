@@ -9,6 +9,7 @@ const SettingComponent = lazy(() => import('./setting/components'));
 const UserComponent = lazy(() => import('./user/components'));
 const PostComponent = lazy(() => import('./post/components'));
 const ProfileComponent = lazy(() => import('./profile/components'));
+const CategoryComponent = lazy(() => import('./category/components'));
 
 const MainRouter: RouteObject[] = [
 	{
@@ -45,7 +46,11 @@ const MainRouter: RouteObject[] = [
 	},
 	{
 		path: `${routeConstant.ROUTE_NAME_MAIN_CATEGORY}/*`,
-		element: <Suspense fallback={null}>{/* <UserComponent /> */}</Suspense>
+		element: (
+			<Suspense fallback={null}>
+				<CategoryComponent />
+			</Suspense>
+		)
 	},
 	{
 		path: `${routeConstant.ROUTE_NAME_MAIN_TAG}/*`,
