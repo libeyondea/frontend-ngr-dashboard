@@ -12,6 +12,7 @@ import TableLoadingComponent from 'components/TableLoading/components';
 import BlockUIComponent from 'components/BlockUI/components';
 import categoryService from 'services/categoryService';
 import { Disclosure } from '@headlessui/react';
+import { BsDashLg } from 'react-icons/bs';
 
 type Props = {};
 
@@ -95,8 +96,15 @@ const ListCategoryComponent: React.FC<Props> = () => {
 			});
 	}, [pagination.limit, pagination.page]);
 
-	const recursiveCategories = (categories: Category[], levels?: Array<string>) => {
-		levels && levels.push('-');
+	const levelCategories = (level: number) => {
+		let test = [];
+		for (let i = 0; i < level; i++) {
+			test.push(<BsDashLg className="inline-block mr-1 text-gray-400" />);
+		}
+		return test;
+	};
+
+	const recursiveCategories = (categories: Category[], level: number = 0) => {
 		return categories.map((category) => (
 			<Fragment key={category.id}>
 				<tr>
@@ -104,7 +112,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 						<div className="flex items-center">
 							<div>
 								<div className="text-sm font-medium text-gray-900">
-									{levels && levels.map((level) => level)}
+									{levelCategories(level)}
 									{category.name}
 								</div>
 							</div>
@@ -131,7 +139,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 						</div>
 					</td>
 				</tr>
-				<Fragment>{category.children && recursiveCategories(category.children, ['-'])}</Fragment>
+				<Fragment>{category.children && recursiveCategories(category.children, level + 1)}</Fragment>
 			</Fragment>
 		));
 	};

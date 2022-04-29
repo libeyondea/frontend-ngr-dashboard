@@ -7,3 +7,13 @@ export interface Category {
 	created_at: string | null;
 	updated_at: string | null;
 }
+
+export interface CreateCategory {
+	parent_id: string;
+	name: string;
+	slug: string;
+}
+
+export interface CreateCategoryFormik extends CreateCategory {}
+
+export interface UpdateCayegoryFormik extends CreateCategoryFormik {}
