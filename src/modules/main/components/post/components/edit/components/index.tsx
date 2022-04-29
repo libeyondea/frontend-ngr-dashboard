@@ -136,9 +136,7 @@ const EditPostComponent: React.FC<Props> = () => {
 		validationSchema: Yup.object({
 			title: Yup.string().required('The title is required.').max(255, 'The title must not be greater than 255 characters.'),
 			slug: Yup.string().max(255, 'The slug must not be greater than 255 characters.').nullable(),
-			excerpt: Yup.string()
-				.required('The excerpt is required.')
-				.max(666, 'The excerpt must not be greater than 666 characters.'),
+			excerpt: Yup.string().max(666, 'The excerpt must not be greater than 666 characters.').nullable(),
 			content: Yup.string()
 				.required('The content is required.')
 				.max(60000, 'The content must not be greater than 60000 characters.'),

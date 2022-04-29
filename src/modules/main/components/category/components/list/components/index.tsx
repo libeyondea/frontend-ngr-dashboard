@@ -3,7 +3,7 @@ import CardComponent from 'components/Card/components';
 import LinkComponent from 'components/Link/components';
 import time from 'helpers/time';
 import { Category } from 'models/category';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import * as routeConstant from 'constants/route';
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa';
 import classNames from 'classnames';
@@ -11,6 +11,7 @@ import Paginationomponent from 'components/Pagination/components';
 import TableLoadingComponent from 'components/TableLoading/components';
 import BlockUIComponent from 'components/BlockUI/components';
 import categoryService from 'services/categoryService';
+import { Disclosure } from '@headlessui/react';
 
 type Props = {};
 
@@ -94,12 +95,44 @@ const ListCategoryComponent: React.FC<Props> = () => {
 			});
 	}, [pagination.limit, pagination.page]);
 
-	const recursiveCategories = (categories: Category[]) => {
+	const recursiveCategories = (categories: Category[], levels?: Array<string>) => {
+		levels && levels.push('-');
 		return categories.map((category) => (
-			<div key={category.id}>
-				<div>{category.name}</div>
-				<div className="ml-4">{category.children && recursiveCategories(category.children)}</div>
-			</div>
+			<Fragment key={category.id}>
+				<tr>
+					<td className="p-3 text-sm whitespace-normal">
+						<div className="flex items-center">
+							<div>
+								<div className="text-sm font-medium text-gray-900">
+									{levels && levels.map((level) => level)}
+									{category.name}
+								</div>
+							</div>
+						</div>
+					</td>
+					<td className="p-3 whitespace-normal text-sm text-gray-500">{category.slug}</td>
+					<td className="p-3 whitespace-nowrap text-sm text-gray-500">{time.ago(category.updated_at)}</td>
+					<td className="p-3 whitespace-nowrap text-sm text-gray-500">{time.format(category.created_at)}</td>
+					<td className="p-3 whitespace-nowrap text-right text-sm font-medium">
+						<div className="flex items-center">
+							<LinkComponent
+								to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_CATEGORY}/${category.id}/${routeConstant.ROUTE_NAME_MAIN_CATEGORY_EDIT}`}
+								className="text-indigo-600 hover:text-indigo-900 mr-2"
+							>
+								<FaRegEdit className="h-5 w-5" />
+							</LinkComponent>
+							<button
+								type="button"
+								className="text-red-600 hover:text-red-900"
+								onClick={() => onDeleteClicked(category.id)}
+							>
+								<FaRegTrashAlt className="h-5 w-5" />
+							</button>
+						</div>
+					</td>
+				</tr>
+				<Fragment>{category.children && recursiveCategories(category.children, ['-'])}</Fragment>
+			</Fragment>
 		));
 	};
 
@@ -159,45 +192,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 																</td>
 															</tr>
 														) : (
-															data.map((category) => (
-																<tr key={category.id}>
-																	<td className="p-3 text-sm whitespace-normal">
-																		<div className="flex items-center">
-																			<div>
-																				<div className="text-sm font-medium text-gray-900">
-																					{category.name}
-																				</div>
-																			</div>
-																		</div>
-																	</td>
-																	<td className="p-3 whitespace-normal text-sm text-gray-500">
-																		{category.slug}
-																	</td>
-																	<td className="p-3 whitespace-nowrap text-sm text-gray-500">
-																		{time.ago(category.updated_at)}
-																	</td>
-																	<td className="p-3 whitespace-nowrap text-sm text-gray-500">
-																		{time.format(category.created_at)}
-																	</td>
-																	<td className="p-3 whitespace-nowrap text-right text-sm font-medium">
-																		<div className="flex items-center">
-																			<LinkComponent
-																				to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_CATEGORY}/${category.id}/${routeConstant.ROUTE_NAME_MAIN_CATEGORY_EDIT}`}
-																				className="text-indigo-600 hover:text-indigo-900 mr-2"
-																			>
-																				<FaRegEdit className="h-5 w-5" />
-																			</LinkComponent>
-																			<button
-																				type="button"
-																				className="text-red-600 hover:text-red-900"
-																				onClick={() => onDeleteClicked(category.id)}
-																			>
-																				<FaRegTrashAlt className="h-5 w-5" />
-																			</button>
-																		</div>
-																	</td>
-																</tr>
-															))
+															recursiveCategories(data)
 														)}
 													</tbody>
 												</table>
