@@ -14,6 +14,7 @@ import categoryService from 'services/categoryService';
 import { Category } from 'models/category';
 import _ from 'lodash';
 import { number } from 'yup/lib/locale';
+import { BsDashLg } from 'react-icons/bs';
 
 type Props = {};
 
