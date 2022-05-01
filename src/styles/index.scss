@@ -52,3 +52,30 @@
 		@apply prose prose-slate lg:prose-lg min-w-full;
 	}
 }
+
+/* TinyMCE React */
+
+.tox:not([dir='rtl']) {
+	.tox-toolbar__group:not(:last-of-type) {
+		border-right: 1px solid #eee !important;
+	}
+}
+
+.tox {
+	.tox-toolbar__overflow,
+	.tox-toolbar__primary {
+		background-repeat: repeat !important;
+	}
+}
+
+.tox:not(.tox-tinymce-inline) {
+	.tox-editor-header {
+		border-bottom: 1px solid #eee !important;
+		padding-bottom: 0 !important;
+	}
+	&.tox-tinymce--toolbar-sticky-on {
+		.tox-editor-header {
+			top: 56px !important;
+		}
+	}
+}

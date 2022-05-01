@@ -2,53 +2,68 @@ import BreadcrumbComponent from 'components/Breadcrumb/components';
 import CardComponent from 'components/Card/components';
 import LinkComponent from 'components/Link/components';
 import time from 'helpers/time';
-import { Category } from 'models/category';
 import { useEffect, useState, Fragment } from 'react';
 import * as routeConstant from 'constants/route';
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa';
 import Paginationomponent from 'components/Pagination/components';
 import TableLoadingComponent from 'components/TableLoading/components';
 import BlockUIComponent from 'components/BlockUI/components';
-import categoryService from 'services/categoryService';
+import { Feedback } from 'models/feedback';
+import feedbackService from 'services/feedbackService';
+import FilterComponent from 'components/Filter/components';
 
 type Props = {};
 
-const ListCategoryComponent: React.FC<Props> = () => {
+const ListFeedbackComponent: React.FC<Props> = () => {
+	const [formSearch, setFormSearch] = useState({
+		q: ''
+	});
+
 	const [state, setState] = useState<{
 		data: {
-			categories: Category[];
+			feedback: Feedback[];
 		};
 		pagination: {
-			categories: {
+			feedback: {
 				page: number;
 				limit: number;
 				limits: number[];
 				total: number;
 			};
 		};
+		filter: {
+			feedback: {
+				q: string;
+			};
+		};
 		loading: {
-			categories: boolean;
+			feedback: boolean;
 		};
 		deleting: {
-			categories: boolean;
+			feedback: boolean;
 		};
 	}>({
 		data: {
-			categories: []
+			feedback: []
 		},
 		pagination: {
-			categories: {
+			feedback: {
 				page: 1,
 				limit: 10,
 				limits: [10, 20, 50, 100],
 				total: 0
 			}
 		},
+		filter: {
+			feedback: {
+				q: ''
+			}
+		},
 		loading: {
-			categories: true
+			feedback: true
 		},
 		deleting: {
-			categories: false
+			feedback: false
 		}
 	});
 
@@ -57,8 +72,8 @@ const ListCategoryComponent: React.FC<Props> = () => {
 			...prevState,
 			pagination: {
 				...prevState.pagination,
-				categories: {
-					...prevState.pagination.categories,
+				feedback: {
+					...prevState.pagination.feedback,
 					page: page
 				}
 			}
@@ -70,8 +85,8 @@ const ListCategoryComponent: React.FC<Props> = () => {
 			...prevState,
 			pagination: {
 				...prevState.pagination,
-				categories: {
-					...prevState.pagination.categories,
+				feedback: {
+					...prevState.pagination.feedback,
 					limit: limit,
 					page: 1
 				}
@@ -79,18 +94,63 @@ const ListCategoryComponent: React.FC<Props> = () => {
 		}));
 	};
 
-	const onDeleteClicked = (categoryId: number) => {
+	const handleChangeSearch = (value: string) => {
+		if (!value) {
+			setState((prevState) => ({
+				...prevState,
+				filter: {
+					...prevState.filter,
+					feedback: {
+						...prevState.filter.feedback,
+						q: ''
+					}
+				},
+				pagination: {
+					...prevState.pagination,
+					feedback: {
+						...prevState.pagination.feedback,
+						page: 1
+					}
+				}
+			}));
+		}
+		setFormSearch({
+			q: value
+		});
+	};
+
+	const handleSubmitSearch = () => {
+		setState((prevState) => ({
+			...prevState,
+			filter: {
+				...prevState.filter,
+				feedback: {
+					...prevState.filter.feedback,
+					q: formSearch.q
+				}
+			},
+			pagination: {
+				...prevState.pagination,
+				feedback: {
+					...prevState.pagination.feedback,
+					page: 1
+				}
+			}
+		}));
+	};
+
+	const onDeleteClicked = (feedbackId: number) => {
 		if (window.confirm('Do you want to delete?')) {
 			new Promise((resolve, reject) => {
 				setState((prevState) => ({
 					...prevState,
 					deleting: {
 						...prevState.deleting,
-						categories: true
+						feedback: true
 					}
 				}));
-				categoryService
-					.delete(categoryId)
+				feedbackService
+					.delete(feedbackId)
 					.then((response) => {
 						return resolve(response);
 					})
@@ -102,7 +162,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 							...prevState,
 							deleting: {
 								...prevState.deleting,
-								categories: false
+								feedback: false
 							}
 						}));
 					});
@@ -112,22 +172,22 @@ const ListCategoryComponent: React.FC<Props> = () => {
 						...prevState,
 						loading: {
 							...prevState.deleting,
-							categories: true
+							feedback: true
 						}
 					}));
-					categoryService
-						.list(state.pagination.categories.page, state.pagination.categories.limit)
+					feedbackService
+						.list(state.pagination.feedback.page, state.pagination.feedback.limit, state.filter.feedback.q)
 						.then((response) => {
 							setState((prevState) => ({
 								...prevState,
 								data: {
 									...prevState.data,
-									categories: response.data.data
+									feedback: response.data.data
 								},
 								pagination: {
 									...prevState.pagination,
-									categories: {
-										...prevState.pagination.categories,
+									feedback: {
+										...prevState.pagination.feedback,
 										total: response.data.pagination.total
 									}
 								}
@@ -139,7 +199,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 								...prevState,
 								loading: {
 									...prevState.deleting,
-									categories: false
+									feedback: false
 								}
 							}));
 						});
@@ -154,22 +214,22 @@ const ListCategoryComponent: React.FC<Props> = () => {
 			...prevState,
 			loading: {
 				...prevState.deleting,
-				categories: true
+				feedback: true
 			}
 		}));
-		categoryService
-			.list(state.pagination.categories.page, state.pagination.categories.limit)
+		feedbackService
+			.list(state.pagination.feedback.page, state.pagination.feedback.limit, state.filter.feedback.q)
 			.then((response) => {
 				setState((prevState) => ({
 					...prevState,
 					data: {
 						...prevState.data,
-						categories: response.data.data
+						feedback: response.data.data
 					},
 					pagination: {
 						...prevState.pagination,
-						categories: {
-							...prevState.pagination.categories,
+						feedback: {
+							...prevState.pagination.feedback,
 							total: response.data.pagination.total
 						}
 					}
@@ -181,60 +241,25 @@ const ListCategoryComponent: React.FC<Props> = () => {
 					...prevState,
 					loading: {
 						...prevState.deleting,
-						categories: false
+						feedback: false
 					}
 				}));
 			});
-	}, [state.pagination.categories.limit, state.pagination.categories.page]);
-
-	const recursiveCategories = (categories: Category[], level: string = '') => {
-		return categories.map((category) => (
-			<Fragment key={category.id}>
-				<tr>
-					<td className="p-3 text-sm whitespace-normal">
-						<div className="flex items-center">
-							<div>
-								<div
-									className="text-sm font-medium text-gray-900"
-									dangerouslySetInnerHTML={{ __html: level + category.name }}
-								/>
-							</div>
-						</div>
-					</td>
-					<td className="p-3 whitespace-normal text-sm text-gray-500">{category.slug}</td>
-					<td className="p-3 whitespace-nowrap text-sm text-gray-500">{time.ago(category.updated_at)}</td>
-					<td className="p-3 whitespace-nowrap text-sm text-gray-500">{time.format(category.created_at)}</td>
-					<td className="p-3 whitespace-nowrap text-right text-sm font-medium">
-						<div className="flex items-center">
-							<LinkComponent
-								to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_CATEGORY}/${category.id}/${routeConstant.ROUTE_NAME_MAIN_CATEGORY_EDIT}`}
-								className="text-indigo-600 hover:text-indigo-900 mr-2"
-							>
-								<FaRegEdit className="h-5 w-5" />
-							</LinkComponent>
-							<button
-								type="button"
-								className="text-red-600 hover:text-red-900"
-								onClick={() => onDeleteClicked(category.id)}
-							>
-								<FaRegTrashAlt className="h-5 w-5" />
-							</button>
-						</div>
-					</td>
-				</tr>
-				<Fragment>{category.children && recursiveCategories(category.children, level + '—&nbsp;')}</Fragment>
-			</Fragment>
-		));
-	};
+	}, [state.filter.feedback.q, state.pagination.feedback.limit, state.pagination.feedback.page]);
 
 	return (
 		<>
-			<BreadcrumbComponent className="mb-4">List categories</BreadcrumbComponent>
+			<BreadcrumbComponent className="mb-4">List feedback</BreadcrumbComponent>
 			<div className="grid grid-cols-1 gap-4">
 				<div className="col-span-1 w-full">
-					<CardComponent header="List categories">
+					<CardComponent header="List feedback">
 						<div className="relative">
-							{state.loading.categories ? (
+							<FilterComponent
+								q={formSearch.q}
+								handleChangeSearch={handleChangeSearch}
+								handleSubmitSearch={handleSubmitSearch}
+							/>
+							{state.loading.feedback ? (
 								<TableLoadingComponent />
 							) : (
 								<div className="flex flex-col">
@@ -249,14 +274,14 @@ const ListCategoryComponent: React.FC<Props> = () => {
 																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
 																style={{ minWidth: '20rem' }}
 															>
-																Category
+																Feedback
 															</th>
 															<th
 																scope="col"
 																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
 																style={{ minWidth: '20rem' }}
 															>
-																Slug
+																Content
 															</th>
 															<th
 																scope="col"
@@ -276,14 +301,59 @@ const ListCategoryComponent: React.FC<Props> = () => {
 														</tr>
 													</thead>
 													<tbody className="bg-white divide-y divide-gray-200">
-														{!state.data.categories.length ? (
+														{!state.data.feedback.length ? (
 															<tr>
 																<td colSpan={6} className="p-3 whitespace-nowrap text-center">
-																	Empty categories
+																	Empty feedback
 																</td>
 															</tr>
 														) : (
-															recursiveCategories(state.data.categories)
+															state.data.feedback.map((feedback) => (
+																<tr key={feedback.id}>
+																	<td className="p-3 text-sm whitespace-normal">
+																		<div className="flex items-center">
+																			<div className="flex-shrink-0 h-10 w-10 mr-4">
+																				<img
+																					className="h-10 w-10 rounded-full"
+																					src={feedback.avatar_url}
+																					alt={feedback.name}
+																				/>
+																			</div>
+																			<div>
+																				<div className="text-sm font-medium text-gray-900">
+																					{feedback.name}
+																				</div>
+																			</div>
+																		</div>
+																	</td>
+																	<td className="p-3 whitespace-normal text-sm text-gray-500">
+																		{feedback.content}
+																	</td>
+																	<td className="p-3 whitespace-nowrap text-sm text-gray-500">
+																		{time.ago(feedback.updated_at)}
+																	</td>
+																	<td className="p-3 whitespace-nowrap text-sm text-gray-500">
+																		{time.format(feedback.created_at)}
+																	</td>
+																	<td className="p-3 whitespace-nowrap text-right text-sm font-medium">
+																		<div className="flex items-center">
+																			<LinkComponent
+																				to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_FEEDBACK}/${feedback.id}/${routeConstant.ROUTE_NAME_MAIN_FEEDBACK_EDIT}`}
+																				className="text-indigo-600 hover:textS-indigo-900 mr-2"
+																			>
+																				<FaRegEdit className="h-5 w-5" />
+																			</LinkComponent>
+																			<button
+																				type="button"
+																				className="text-red-600 hover:text-red-900"
+																				onClick={() => onDeleteClicked(feedback.id)}
+																			>
+																				<FaRegTrashAlt className="h-5 w-5" />
+																			</button>
+																		</div>
+																	</td>
+																</tr>
+															))
 														)}
 													</tbody>
 												</table>
@@ -293,14 +363,14 @@ const ListCategoryComponent: React.FC<Props> = () => {
 								</div>
 							)}
 							<Paginationomponent
-								limits={state.pagination.categories.limits}
-								total={state.pagination.categories.total}
-								limit={state.pagination.categories.limit}
-								currentPage={state.pagination.categories.page}
+								limits={state.pagination.feedback.limits}
+								total={state.pagination.feedback.total}
+								limit={state.pagination.feedback.limit}
+								currentPage={state.pagination.feedback.page}
 								onChangePage={onChangePage}
 								onChangeLimit={onChangeLimit}
 							/>
-							<BlockUIComponent isBlocking={state.deleting.categories} />
+							<BlockUIComponent isBlocking={state.deleting.feedback} />
 						</div>
 					</CardComponent>
 				</div>
@@ -309,4 +379,4 @@ const ListCategoryComponent: React.FC<Props> = () => {
 	);
 };
 
-export default ListCategoryComponent;
+export default ListFeedbackComponent;

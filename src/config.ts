@@ -25,6 +25,10 @@ const config = {
 
 			CRUD_CATEGORY: '/categories',
 
+			CRUD_ADVISE: '/advises',
+
+			CRUD_FEEDBACK: '/feedback',
+
 			UPLOAD_IMAGE: '/images/upload'
 		}
 	},

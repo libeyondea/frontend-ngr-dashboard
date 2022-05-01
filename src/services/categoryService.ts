@@ -1,6 +1,6 @@
 import http from 'helpers/http';
 import config from 'config';
-import { Category, CreateCategory } from 'models/category';
+import { Category, CreateCategory, UpdateCategory } from 'models/category';
 import { ResponseData, ResponseDataPagination } from 'models/response';
 
 const categoryService = {
@@ -24,12 +24,12 @@ const categoryService = {
 			data: data
 		});
 	},
-	/* update: (id: number, data: UpdatePost) => {
-		return http.put<ResponseData<v>>({
+	update: (id: number, data: UpdateCategory) => {
+		return http.put<ResponseData<Category>>({
 			url: `${config.API.END_POINT.CRUD_CATEGORY}/${id}`,
 			data: data
 		});
-	}, */
+	},
 	delete: (id: number) => {
 		return http.delete<ResponseData<any>>({
 			url: `${config.API.END_POINT.CRUD_CATEGORY}/${id}`

@@ -9,11 +9,8 @@ import classNames from 'classnames';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { Fragment, useEffect, useState } from 'react';
 import toastify from 'helpers/toastify';
-import { CreateCategoryFormik } from 'models/category';
+import { CreateCategoryFormik, Category } from 'models/category';
 import categoryService from 'services/categoryService';
-import { Category } from 'models/category';
-import _ from 'lodash';
-import { number } from 'yup/lib/locale';
 
 type Props = {};
 
@@ -83,7 +80,7 @@ const NewCategoryComponent: React.FC<Props> = () => {
 		validationSchema: Yup.object({
 			name: Yup.string().required('The name is required.').max(255, 'The name must not be greater than 255 characters.'),
 			slug: Yup.string().max(255, 'The slug must not be greater than 255 characters.').nullable(),
-			parent_id: Yup.string()
+			parent_id: Yup.number().nullable()
 		}),
 		onSubmit: (values, { setErrors }) => {
 			setState((prevState) => ({
@@ -123,19 +120,11 @@ const NewCategoryComponent: React.FC<Props> = () => {
 		}
 	});
 
-	const levelCategories = (level: number) => {
-		let test = [];
-		for (let i = 0; i < level; i++) {
-			test.push(<BsDashLg className="inline-block mr-1 text-gray-400" />);
-		}
-		return test;
-	};
-
-	const recursiveCategories = (categories: Category[]) => {
+	const recursiveCategories = (categories: Category[], level: string = '') => {
 		return categories.map((category) => (
 			<Fragment key={category.id}>
-				<option value={category.id}>{category.name}</option>
-				<Fragment>{category.children && recursiveCategories(category.children)}</Fragment>
+				<option value={category.id} dangerouslySetInnerHTML={{ __html: level + category.name }} />
+				<Fragment>{category.children && recursiveCategories(category.children, level + '&nbsp;&nbsp;&nbsp;')}</Fragment>
 			</Fragment>
 		));
 	};
@@ -224,7 +213,7 @@ const NewCategoryComponent: React.FC<Props> = () => {
 												<option value={''}>Empty</option>
 											) : (
 												<Fragment>
-													<option value={''}>---Select---</option>
+													<option value={''}>Empty</option>
 													{recursiveCategories(state.data.categories)}
 												</Fragment>
 											)}

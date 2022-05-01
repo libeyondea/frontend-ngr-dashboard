@@ -9,6 +9,7 @@
 		"@mantine/rte": "^4.1.5",
 		"@reduxjs/toolkit": "^1.8.1",
 		"@tailwindcss/forms": "^0.4.1",
+		"@tinymce/tinymce-react": "^4.0.0",
 		"@types/js-cookie": "^3.0.2",
 		"@types/node": "^16.11.31",
 		"@types/react": "^17.0.44",
@@ -36,6 +37,8 @@
 		"redux-observable": "^2.0.0",
 		"reselect": "^4.1.5",
 		"rxjs": "^7.5.5",
+		"slugify": "^1.6.5",
+		"tinymce": "^6.0.2",
 		"typescript": "^4.6.3",
 		"web-vitals": "^2.1.4",
 		"yup": "^0.32.11"

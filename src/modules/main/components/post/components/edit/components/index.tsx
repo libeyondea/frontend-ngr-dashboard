@@ -11,14 +11,14 @@ import imageService from 'services/imageService';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { Fragment, useEffect, useState } from 'react';
 import toastify from 'helpers/toastify';
-import { CreatePostFormik, Post } from 'models/post';
+import { UpdatePostFormik, Post } from 'models/post';
 import categoryService from 'services/categoryService';
 import { Category } from 'models/category';
 import CreatableSelect from 'react-select/creatable';
 import postService from 'services/postService';
 import Loadingomponent from 'components/Loading/components';
 import _ from 'lodash';
-import JoditEditor from 'jodit-react';
+import EditorInput from 'components/EditorInput/components';
 
 type Props = {};
 
@@ -68,7 +68,7 @@ const EditPostComponent: React.FC<Props> = () => {
 			}
 		}));
 		categoryService
-			.list(1, 100)
+			.list(1, 300)
 			.then((response) => {
 				setState((prevState) => ({
 					...prevState,
@@ -121,7 +121,7 @@ const EditPostComponent: React.FC<Props> = () => {
 			});
 	}, [params.postId]);
 
-	const formik: FormikProps<CreatePostFormik> = useFormik<CreatePostFormik>({
+	const formik: FormikProps<UpdatePostFormik> = useFormik<UpdatePostFormik>({
 		enableReinitialize: true,
 		initialValues: {
 			title: state.data.post.title,
@@ -164,7 +164,6 @@ const EditPostComponent: React.FC<Props> = () => {
 				)
 		}),
 		onSubmit: (values, { setErrors }) => {
-			console.log(values);
 			new Promise<{ image?: string }>((resolve, reject) => {
 				if (!values.image) {
 					return resolve({});
@@ -232,11 +231,11 @@ const EditPostComponent: React.FC<Props> = () => {
 		}
 	});
 
-	const recursiveCategories = (categories: Category[]) => {
+	const recursiveCategories = (categories: Category[], level: string = '') => {
 		return categories.map((category) => (
 			<Fragment key={category.id}>
-				<option value={category.id}>{category.name}</option>
-				<Fragment>{category.children && recursiveCategories(category.children)}</Fragment>
+				<option value={category.id} dangerouslySetInnerHTML={{ __html: level + category.name }} />
+				<Fragment>{category.children && recursiveCategories(category.children, level + '&nbsp;&nbsp;&nbsp;')}</Fragment>
 			</Fragment>
 		));
 	};
@@ -342,7 +341,7 @@ const EditPostComponent: React.FC<Props> = () => {
 												value={formik.values.excerpt}
 												name="excerpt"
 												id="excerpt"
-											></textarea>
+											/>
 										</div>
 										{formik.errors.excerpt && formik.touched.excerpt && (
 											<div className="text-red-700 mt-1 text-sm">{formik.errors.excerpt}</div>
@@ -353,31 +352,11 @@ const EditPostComponent: React.FC<Props> = () => {
 											Content
 										</label>
 										<div className="relative">
-											<JoditEditor
-												value={formik.values.content}
-												config={{
-													readonly: false,
-													minHeight: 666
-												}}
-												onBlur={(value) => formik.setFieldValue('content', value)}
-												onChange={(value) => {}}
-											/>
-											{/* <textarea
-												rows={8}
-												placeholder="Enter content"
-												className={classNames(
-													'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
-													{
-														'focus:ring-red-600 border-red-600':
-															formik.errors.content && formik.touched.content
-													}
-												)}
-												onChange={formik.handleChange}
-												onBlur={formik.handleBlur}
-												value={formik.values.content}
+											<EditorInput
 												name="content"
-												id="content"
-											></textarea> */}
+												value={formik.values.content}
+												onChangeCustom={formik.setFieldValue}
+											/>
 										</div>
 										{formik.errors.content && formik.touched.content && (
 											<div className="text-red-700 mt-1 text-sm">{formik.errors.content}</div>
@@ -469,9 +448,9 @@ const EditPostComponent: React.FC<Props> = () => {
 												id="status"
 											>
 												{[
+													postConstant.POST_STATUS_PUBLISH,
 													postConstant.POST_STATUS_DRAFT,
 													postConstant.POST_STATUS_PENDING,
-													postConstant.POST_STATUS_PUBLISH,
 													postConstant.POST_STATUS_TRASH
 												].map((status, index) => (
 													<option value={status} key={index}>

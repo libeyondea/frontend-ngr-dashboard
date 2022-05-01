@@ -18,8 +18,7 @@ import { Category } from 'models/category';
 import CreatableSelect from 'react-select/creatable';
 import postService from 'services/postService';
 import _ from 'lodash';
-import JoditEditor from 'jodit-react';
-import { RichTextEditor } from '@mantine/rte';
+import EditorInput from 'components/EditorInput/components';
 
 type Props = {};
 
@@ -65,7 +64,7 @@ const NewPostComponent: React.FC<Props> = () => {
 			}
 		}));
 		categoryService
-			.list(1, 100)
+			.list(1, 300)
 			.then((response) => {
 				setState((prevState) => ({
 					...prevState,
@@ -93,8 +92,8 @@ const NewPostComponent: React.FC<Props> = () => {
 			title: '',
 			slug: '',
 			excerpt: '',
-			content: '',
-			status: postConstant.POST_STATUS_DRAFT,
+			content: localStorage.getItem('editor_content') || '',
+			status: postConstant.POST_STATUS_PUBLISH,
 			category_id: 0,
 			tags: [],
 			image: null
@@ -130,7 +129,6 @@ const NewPostComponent: React.FC<Props> = () => {
 				)
 		}),
 		onSubmit: (values, { setErrors }) => {
-			console.log(values);
 			new Promise<{ image?: string }>((resolve, reject) => {
 				if (!values.image) {
 					return resolve({});
@@ -192,7 +190,7 @@ const NewPostComponent: React.FC<Props> = () => {
 		}
 	});
 
-	const handleImageUpload = (image: File): Promise<string> =>
+	/* const handleImageUpload = (image: File): Promise<string> =>
 		new Promise<string>((resolve, reject) => {
 			imageService
 				.upload({
@@ -202,13 +200,13 @@ const NewPostComponent: React.FC<Props> = () => {
 					return resolve(response.data.data.image);
 				})
 				.catch(() => reject(new Error('Upload failed')));
-		});
+		}); */
 
-	const recursiveCategories = (categories: Category[]) => {
+	const recursiveCategories = (categories: Category[], level: string = '') => {
 		return categories.map((category) => (
 			<Fragment key={category.id}>
-				<option value={category.id}>{category.name}</option>
-				<Fragment>{category.children && recursiveCategories(category.children)}</Fragment>
+				<option value={category.id} dangerouslySetInnerHTML={{ __html: level + category.name }} />
+				<Fragment>{category.children && recursiveCategories(category.children, level + '&nbsp;&nbsp;&nbsp;')}</Fragment>
 			</Fragment>
 		));
 	};
@@ -309,7 +307,7 @@ const NewPostComponent: React.FC<Props> = () => {
 											value={formik.values.excerpt}
 											name="excerpt"
 											id="excerpt"
-										></textarea>
+										/>
 									</div>
 									{formik.errors.excerpt && formik.touched.excerpt && (
 										<div className="text-red-700 mt-1 text-sm">{formik.errors.excerpt}</div>
@@ -320,41 +318,11 @@ const NewPostComponent: React.FC<Props> = () => {
 										Content
 									</label>
 									<div className="relative">
-										<JoditEditor
-											value={formik.values.content}
-											config={{
-												readonly: false,
-												minHeight: 666
-											}}
-											onBlur={(value) => formik.setFieldValue('content', value)}
-											onChange={(value) => {}}
-										/>
-										{/* <RichTextEditor
-											className="rich-text-editor"
-											placeholder="Enter content"
-											value={formik.values.content}
-											onChange={(value) => formik.setFieldValue('content', value)}
-											onBlur={() => formik.setFieldTouched('content', true)}
-											onImageUpload={handleImageUpload}
-											sticky={true}
-											stickyOffset={56}
-										/> */}
-										{/* <textarea
-											rows={8}
-											placeholder="Enter content"
-											className={classNames(
-												'rounded-md flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent',
-												{
-													'focus:ring-red-600 border-red-600':
-														formik.errors.content && formik.touched.content
-												}
-											)}
-											onChange={formik.handleChange}
-											onBlur={formik.handleBlur}
-											value={formik.values.content}
+										<EditorInput
 											name="content"
-											id="content"
-										></textarea> */}
+											value={formik.values.content}
+											onChangeCustom={formik.setFieldValue}
+										/>
 									</div>
 									{formik.errors.content && formik.touched.content && (
 										<div className="text-red-700 mt-1 text-sm">{formik.errors.content}</div>
@@ -446,9 +414,9 @@ const NewPostComponent: React.FC<Props> = () => {
 											id="status"
 										>
 											{[
+												postConstant.POST_STATUS_PUBLISH,
 												postConstant.POST_STATUS_DRAFT,
 												postConstant.POST_STATUS_PENDING,
-												postConstant.POST_STATUS_PUBLISH,
 												postConstant.POST_STATUS_TRASH
 											].map((status, index) => (
 												<option value={status} key={index}>

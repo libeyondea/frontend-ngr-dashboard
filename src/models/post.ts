@@ -40,4 +40,4 @@ export interface CreatePostFormik extends Omit<CreatePost, 'image'> {
 	image: File | null;
 }
 
-export interface UpdateUserFormik extends CreatePostFormik {}
+export interface UpdatePostFormik extends CreatePostFormik {}

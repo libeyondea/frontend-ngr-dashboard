@@ -10,6 +10,8 @@ const UserComponent = lazy(() => import('./user/components'));
 const PostComponent = lazy(() => import('./post/components'));
 const ProfileComponent = lazy(() => import('./profile/components'));
 const CategoryComponent = lazy(() => import('./category/components'));
+const AdviseComponent = lazy(() => import('./advise/components'));
+const FeedbackComponent = lazy(() => import('./feedback/components'));
 
 const MainRouter: RouteObject[] = [
 	{
@@ -58,11 +60,19 @@ const MainRouter: RouteObject[] = [
 	},
 	{
 		path: `${routeConstant.ROUTE_NAME_MAIN_FEEDBACK}/*`,
-		element: <Suspense fallback={null}>{/* <UserComponent /> */}</Suspense>
+		element: (
+			<Suspense fallback={null}>
+				<FeedbackComponent />
+			</Suspense>
+		)
 	},
 	{
 		path: `${routeConstant.ROUTE_NAME_MAIN_ADVISE}/*`,
-		element: <Suspense fallback={null}>{/* <UserComponent /> */}</Suspense>
+		element: (
+			<Suspense fallback={null}>
+				<AdviseComponent />
+			</Suspense>
+		)
 	},
 	{
 		path: `${routeConstant.ROUTE_NAME_MAIN_PROFILE}`,

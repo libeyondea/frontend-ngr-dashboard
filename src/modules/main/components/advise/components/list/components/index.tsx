@@ -2,53 +2,68 @@ import BreadcrumbComponent from 'components/Breadcrumb/components';
 import CardComponent from 'components/Card/components';
 import LinkComponent from 'components/Link/components';
 import time from 'helpers/time';
-import { Category } from 'models/category';
 import { useEffect, useState, Fragment } from 'react';
 import * as routeConstant from 'constants/route';
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa';
 import Paginationomponent from 'components/Pagination/components';
 import TableLoadingComponent from 'components/TableLoading/components';
 import BlockUIComponent from 'components/BlockUI/components';
-import categoryService from 'services/categoryService';
+import { Advise } from 'models/advise';
+import adviseService from 'services/adviseService';
+import FilterComponent from 'components/Filter/components';
 
 type Props = {};
 
-const ListCategoryComponent: React.FC<Props> = () => {
+const ListAdviseComponent: React.FC<Props> = () => {
+	const [formSearch, setFormSearch] = useState({
+		q: ''
+	});
+
 	const [state, setState] = useState<{
 		data: {
-			categories: Category[];
+			advises: Advise[];
 		};
 		pagination: {
-			categories: {
+			advises: {
 				page: number;
 				limit: number;
 				limits: number[];
 				total: number;
 			};
 		};
+		filter: {
+			advises: {
+				q: string;
+			};
+		};
 		loading: {
-			categories: boolean;
+			advises: boolean;
 		};
 		deleting: {
-			categories: boolean;
+			advises: boolean;
 		};
 	}>({
 		data: {
-			categories: []
+			advises: []
 		},
 		pagination: {
-			categories: {
+			advises: {
 				page: 1,
 				limit: 10,
 				limits: [10, 20, 50, 100],
 				total: 0
 			}
 		},
+		filter: {
+			advises: {
+				q: ''
+			}
+		},
 		loading: {
-			categories: true
+			advises: true
 		},
 		deleting: {
-			categories: false
+			advises: false
 		}
 	});
 
@@ -57,8 +72,8 @@ const ListCategoryComponent: React.FC<Props> = () => {
 			...prevState,
 			pagination: {
 				...prevState.pagination,
-				categories: {
-					...prevState.pagination.categories,
+				advises: {
+					...prevState.pagination.advises,
 					page: page
 				}
 			}
@@ -70,8 +85,8 @@ const ListCategoryComponent: React.FC<Props> = () => {
 			...prevState,
 			pagination: {
 				...prevState.pagination,
-				categories: {
-					...prevState.pagination.categories,
+				advises: {
+					...prevState.pagination.advises,
 					limit: limit,
 					page: 1
 				}
@@ -79,18 +94,63 @@ const ListCategoryComponent: React.FC<Props> = () => {
 		}));
 	};
 
-	const onDeleteClicked = (categoryId: number) => {
+	const handleChangeSearch = (value: string) => {
+		if (!value) {
+			setState((prevState) => ({
+				...prevState,
+				filter: {
+					...prevState.filter,
+					advises: {
+						...prevState.filter.advises,
+						q: ''
+					}
+				},
+				pagination: {
+					...prevState.pagination,
+					advises: {
+						...prevState.pagination.advises,
+						page: 1
+					}
+				}
+			}));
+		}
+		setFormSearch({
+			q: value
+		});
+	};
+
+	const handleSubmitSearch = () => {
+		setState((prevState) => ({
+			...prevState,
+			filter: {
+				...prevState.filter,
+				advises: {
+					...prevState.filter.advises,
+					q: formSearch.q
+				}
+			},
+			pagination: {
+				...prevState.pagination,
+				advises: {
+					...prevState.pagination.advises,
+					page: 1
+				}
+			}
+		}));
+	};
+
+	const onDeleteClicked = (adviseId: number) => {
 		if (window.confirm('Do you want to delete?')) {
 			new Promise((resolve, reject) => {
 				setState((prevState) => ({
 					...prevState,
 					deleting: {
 						...prevState.deleting,
-						categories: true
+						advises: true
 					}
 				}));
-				categoryService
-					.delete(categoryId)
+				adviseService
+					.delete(adviseId)
 					.then((response) => {
 						return resolve(response);
 					})
@@ -102,7 +162,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 							...prevState,
 							deleting: {
 								...prevState.deleting,
-								categories: false
+								advises: false
 							}
 						}));
 					});
@@ -112,22 +172,22 @@ const ListCategoryComponent: React.FC<Props> = () => {
 						...prevState,
 						loading: {
 							...prevState.deleting,
-							categories: true
+							advises: true
 						}
 					}));
-					categoryService
-						.list(state.pagination.categories.page, state.pagination.categories.limit)
+					adviseService
+						.list(state.pagination.advises.page, state.pagination.advises.limit, state.filter.advises.q)
 						.then((response) => {
 							setState((prevState) => ({
 								...prevState,
 								data: {
 									...prevState.data,
-									categories: response.data.data
+									advises: response.data.data
 								},
 								pagination: {
 									...prevState.pagination,
-									categories: {
-										...prevState.pagination.categories,
+									advises: {
+										...prevState.pagination.advises,
 										total: response.data.pagination.total
 									}
 								}
@@ -139,7 +199,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 								...prevState,
 								loading: {
 									...prevState.deleting,
-									categories: false
+									advises: false
 								}
 							}));
 						});
@@ -154,22 +214,22 @@ const ListCategoryComponent: React.FC<Props> = () => {
 			...prevState,
 			loading: {
 				...prevState.deleting,
-				categories: true
+				advises: true
 			}
 		}));
-		categoryService
-			.list(state.pagination.categories.page, state.pagination.categories.limit)
+		adviseService
+			.list(state.pagination.advises.page, state.pagination.advises.limit, state.filter.advises.q)
 			.then((response) => {
 				setState((prevState) => ({
 					...prevState,
 					data: {
 						...prevState.data,
-						categories: response.data.data
+						advises: response.data.data
 					},
 					pagination: {
 						...prevState.pagination,
-						categories: {
-							...prevState.pagination.categories,
+						advises: {
+							...prevState.pagination.advises,
 							total: response.data.pagination.total
 						}
 					}
@@ -181,60 +241,25 @@ const ListCategoryComponent: React.FC<Props> = () => {
 					...prevState,
 					loading: {
 						...prevState.deleting,
-						categories: false
+						advises: false
 					}
 				}));
 			});
-	}, [state.pagination.categories.limit, state.pagination.categories.page]);
-
-	const recursiveCategories = (categories: Category[], level: string = '') => {
-		return categories.map((category) => (
-			<Fragment key={category.id}>
-				<tr>
-					<td className="p-3 text-sm whitespace-normal">
-						<div className="flex items-center">
-							<div>
-								<div
-									className="text-sm font-medium text-gray-900"
-									dangerouslySetInnerHTML={{ __html: level + category.name }}
-								/>
-							</div>
-						</div>
-					</td>
-					<td className="p-3 whitespace-normal text-sm text-gray-500">{category.slug}</td>
-					<td className="p-3 whitespace-nowrap text-sm text-gray-500">{time.ago(category.updated_at)}</td>
-					<td className="p-3 whitespace-nowrap text-sm text-gray-500">{time.format(category.created_at)}</td>
-					<td className="p-3 whitespace-nowrap text-right text-sm font-medium">
-						<div className="flex items-center">
-							<LinkComponent
-								to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_CATEGORY}/${category.id}/${routeConstant.ROUTE_NAME_MAIN_CATEGORY_EDIT}`}
-								className="text-indigo-600 hover:text-indigo-900 mr-2"
-							>
-								<FaRegEdit className="h-5 w-5" />
-							</LinkComponent>
-							<button
-								type="button"
-								className="text-red-600 hover:text-red-900"
-								onClick={() => onDeleteClicked(category.id)}
-							>
-								<FaRegTrashAlt className="h-5 w-5" />
-							</button>
-						</div>
-					</td>
-				</tr>
-				<Fragment>{category.children && recursiveCategories(category.children, level + '—&nbsp;')}</Fragment>
-			</Fragment>
-		));
-	};
+	}, [state.filter.advises.q, state.pagination.advises.limit, state.pagination.advises.page]);
 
 	return (
 		<>
-			<BreadcrumbComponent className="mb-4">List categories</BreadcrumbComponent>
+			<BreadcrumbComponent className="mb-4">List advises</BreadcrumbComponent>
 			<div className="grid grid-cols-1 gap-4">
 				<div className="col-span-1 w-full">
-					<CardComponent header="List categories">
+					<CardComponent header="List advises">
 						<div className="relative">
-							{state.loading.categories ? (
+							<FilterComponent
+								q={formSearch.q}
+								handleChangeSearch={handleChangeSearch}
+								handleSubmitSearch={handleSubmitSearch}
+							/>
+							{state.loading.advises ? (
 								<TableLoadingComponent />
 							) : (
 								<div className="flex flex-col">
@@ -249,14 +274,20 @@ const ListCategoryComponent: React.FC<Props> = () => {
 																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
 																style={{ minWidth: '20rem' }}
 															>
-																Category
+																Advise
 															</th>
 															<th
 																scope="col"
 																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
 																style={{ minWidth: '20rem' }}
 															>
-																Slug
+																Email
+															</th>
+															<th
+																scope="col"
+																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
+															>
+																Phone number
 															</th>
 															<th
 																scope="col"
@@ -276,14 +307,55 @@ const ListCategoryComponent: React.FC<Props> = () => {
 														</tr>
 													</thead>
 													<tbody className="bg-white divide-y divide-gray-200">
-														{!state.data.categories.length ? (
+														{!state.data.advises.length ? (
 															<tr>
 																<td colSpan={6} className="p-3 whitespace-nowrap text-center">
-																	Empty categories
+																	Empty advises
 																</td>
 															</tr>
 														) : (
-															recursiveCategories(state.data.categories)
+															state.data.advises.map((advise) => (
+																<tr key={advise.id}>
+																	<td className="p-3 text-sm whitespace-normal">
+																		<div className="flex items-center">
+																			<div>
+																				<div className="text-sm font-medium text-gray-900">
+																					{advise.name}
+																				</div>
+																			</div>
+																		</div>
+																	</td>
+																	<td className="p-3 whitespace-normal text-sm text-gray-500">
+																		{advise.email}
+																	</td>
+																	<td className="p-3 whitespace-normal text-sm text-gray-500">
+																		{advise.phone_number}
+																	</td>
+																	<td className="p-3 whitespace-nowrap text-sm text-gray-500">
+																		{time.ago(advise.updated_at)}
+																	</td>
+																	<td className="p-3 whitespace-nowrap text-sm text-gray-500">
+																		{time.format(advise.created_at)}
+																	</td>
+																	<td className="p-3 whitespace-nowrap text-right text-sm font-medium">
+																		<div className="flex items-center">
+																			<LinkComponent
+																				to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_ADVISE}/${advise.id}/${routeConstant.ROUTE_NAME_MAIN_ADVISE_EDIT}`}
+																				className="text-indigo-600 hover:textS-indigo-900 mr-2"
+																			>
+																				<FaRegEdit className="h-5 w-5" />
+																			</LinkComponent>
+																			<button
+																				type="button"
+																				className="text-red-600 hover:text-red-900"
+																				onClick={() => onDeleteClicked(advise.id)}
+																			>
+																				<FaRegTrashAlt className="h-5 w-5" />
+																			</button>
+																		</div>
+																	</td>
+																</tr>
+															))
 														)}
 													</tbody>
 												</table>
@@ -293,14 +365,14 @@ const ListCategoryComponent: React.FC<Props> = () => {
 								</div>
 							)}
 							<Paginationomponent
-								limits={state.pagination.categories.limits}
-								total={state.pagination.categories.total}
-								limit={state.pagination.categories.limit}
-								currentPage={state.pagination.categories.page}
+								limits={state.pagination.advises.limits}
+								total={state.pagination.advises.total}
+								limit={state.pagination.advises.limit}
+								currentPage={state.pagination.advises.page}
 								onChangePage={onChangePage}
 								onChangeLimit={onChangeLimit}
 							/>
-							<BlockUIComponent isBlocking={state.deleting.categories} />
+							<BlockUIComponent isBlocking={state.deleting.advises} />
 						</div>
 					</CardComponent>
 				</div>
@@ -309,4 +381,4 @@ const ListCategoryComponent: React.FC<Props> = () => {
 	);
 };
 
-export default ListCategoryComponent;
+export default ListAdviseComponent;

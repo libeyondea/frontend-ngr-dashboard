@@ -9,11 +9,13 @@ export interface Category {
 }
 
 export interface CreateCategory {
-	parent_id: string;
+	parent_id: number | '';
 	name: string;
 	slug: string;
 }
 
+export interface UpdateCategory extends CreateCategory {}
+
 export interface CreateCategoryFormik extends CreateCategory {}
 
-export interface UpdateCayegoryFormik extends CreateCategoryFormik {}
+export interface UpdateCategoryFormik extends UpdateCategory {}
