@@ -4,7 +4,7 @@ import LinkComponent from 'components/Link/components';
 import time from 'helpers/time';
 import { Post } from 'models/post';
 import { Category } from 'models/category';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import postService from 'services/postService';
 import * as routeConstant from 'constants/route';
 import * as postConstant from 'constants/post';
@@ -250,12 +250,15 @@ const ListPostComponent: React.FC<Props> = () => {
 			});
 	}, [state.filter.posts.q, state.pagination.posts.limit, state.pagination.posts.page]);
 
-	const recursiveCategories = (categories: Category[]) => {
+	const recursiveCategories = (categories: Category[], str?: string) => {
 		return categories.map((category) => (
-			<div key={category.id}>
-				<div>{category.name}</div>
-				<div className="ml-4">{category.children && recursiveCategories(category.children)}</div>
-			</div>
+			<Fragment key={category.id}>
+				<span>
+					{str}
+					{category.name}
+				</span>
+				<Fragment>{category.children && recursiveCategories(category.children, ', ')}</Fragment>
+			</Fragment>
 		));
 	};
 
@@ -284,17 +287,17 @@ const ListPostComponent: React.FC<Props> = () => {
 															<th
 																scope="col"
 																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
-																style={{ minWidth: '20rem' }}
+																style={{ width: '25%', minWidth: '20rem' }}
 															>
 																Post
 															</th>
-															<th
+															{/* <th
 																scope="col"
 																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
 																style={{ minWidth: '20rem' }}
 															>
 																Excerpt
-															</th>
+															</th> */}
 															<th
 																scope="col"
 																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
@@ -304,6 +307,7 @@ const ListPostComponent: React.FC<Props> = () => {
 															<th
 																scope="col"
 																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
+																style={{ width: '25%', minWidth: '15rem' }}
 															>
 																Categories
 															</th>
@@ -334,13 +338,13 @@ const ListPostComponent: React.FC<Props> = () => {
 														) : (
 															state.data.posts.map((post) => (
 																<tr key={post.id}>
-																	<td className="p-3 text-sm whitespace-normal">
+																	<td className="p-3 text-sm">
 																		<div className="flex items-center">
-																			{/* <div className="flex-shrink-0 h-32 w-32 mr-4">
+																			{/* <div className="flex-shrink-0 h-28 w-36 mr-4">
 																				<img
-																					className="h-32 w-32"
+																					className="h-28 w-36"
 																					src={post.image_url}
-																					alt={post.translations[0].title}
+																					alt={post.title}
 																				/>
 																			</div> */}
 																			<div>
@@ -350,9 +354,9 @@ const ListPostComponent: React.FC<Props> = () => {
 																			</div>
 																		</div>
 																	</td>
-																	<td className="p-3 whitespace-normal text-sm text-gray-500">
+																	{/* <td className="p-3 whitespace-normal text-sm text-gray-500">
 																		{post.excerpt}
-																	</td>
+																	</td> */}
 																	<td className="p-3 whitespace-nowrap">
 																		<span
 																			className={classNames(
@@ -373,7 +377,7 @@ const ListPostComponent: React.FC<Props> = () => {
 																			{post.status}
 																		</span>
 																	</td>
-																	<td className="p-3 whitespace-nowrap text-sm text-gray-500 capitalize">
+																	<td className="p-3 text-sm text-gray-500 capitalize">
 																		{recursiveCategories(post.categories)}
 																	</td>
 																	<td className="p-3 whitespace-nowrap text-sm text-gray-500">
