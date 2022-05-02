@@ -171,7 +171,7 @@ const ListFeedbackComponent: React.FC<Props> = () => {
 					setState((prevState) => ({
 						...prevState,
 						loading: {
-							...prevState.deleting,
+							...prevState.loading,
 							feedback: true
 						}
 					}));
@@ -198,7 +198,7 @@ const ListFeedbackComponent: React.FC<Props> = () => {
 							setState((prevState) => ({
 								...prevState,
 								loading: {
-									...prevState.deleting,
+									...prevState.loading,
 									feedback: false
 								}
 							}));
@@ -213,7 +213,7 @@ const ListFeedbackComponent: React.FC<Props> = () => {
 		setState((prevState) => ({
 			...prevState,
 			loading: {
-				...prevState.deleting,
+				...prevState.loading,
 				feedback: true
 			}
 		}));
@@ -240,7 +240,7 @@ const ListFeedbackComponent: React.FC<Props> = () => {
 				setState((prevState) => ({
 					...prevState,
 					loading: {
-						...prevState.deleting,
+						...prevState.loading,
 						feedback: false
 					}
 				}));

@@ -24,8 +24,6 @@ type Props = {};
 
 const NewPostComponent: React.FC<Props> = () => {
 	const navigate = useNavigate();
-	const [isUploading, setUploading] = useState(false);
-	const [isCreating, setCreating] = useState(false);
 
 	const [state, setState] = useState<{
 		data: {
@@ -133,7 +131,13 @@ const NewPostComponent: React.FC<Props> = () => {
 				if (!values.image) {
 					return resolve({});
 				}
-				setUploading(true);
+				setState((prevState) => ({
+					...prevState,
+					uploading: {
+						...prevState.uploading,
+						post: true
+					}
+				}));
 				imageService
 					.upload({
 						image: values.image
@@ -145,11 +149,23 @@ const NewPostComponent: React.FC<Props> = () => {
 						return reject(error);
 					})
 					.finally(() => {
-						setUploading(false);
+						setState((prevState) => ({
+							...prevState,
+							uploading: {
+								...prevState.uploading,
+								post: false
+							}
+						}));
 					});
 			})
 				.then((result) => {
-					setCreating(true);
+					setState((prevState) => ({
+						...prevState,
+						creating: {
+							...prevState.uploading,
+							post: true
+						}
+					}));
 					const payload = {
 						title: values.title,
 						slug: values.slug,
@@ -176,7 +192,13 @@ const NewPostComponent: React.FC<Props> = () => {
 							}
 						})
 						.finally(() => {
-							setCreating(false);
+							setState((prevState) => ({
+								...prevState,
+								creating: {
+									...prevState.uploading,
+									post: true
+								}
+							}));
 						});
 				})
 				.catch((error) => {
@@ -435,17 +457,18 @@ const NewPostComponent: React.FC<Props> = () => {
 										className={classNames(
 											'flex items-center justify-center py-3 px-4 bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 focus:ring-offset-purple-200 text-white transition ease-in duration-200 text-sm font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md',
 											{
-												'cursor-not-allowed disabled:opacity-50': isUploading || isCreating
+												'cursor-not-allowed disabled:opacity-50':
+													state.uploading.post || state.creating.post
 											}
 										)}
-										disabled={isUploading || isCreating}
+										disabled={state.uploading.post || state.creating.post}
 									>
-										{isUploading ? (
+										{state.uploading.post ? (
 											<>
 												<AiOutlineLoading3Quarters className="animate-spin h-4 w-4 mr-2 font-medium" />
 												<span>Uploading</span>
 											</>
-										) : isCreating ? (
+										) : state.creating.post ? (
 											<>
 												<AiOutlineLoading3Quarters className="animate-spin h-4 w-4 mr-2 font-medium" />
 												<span>Creating</span>

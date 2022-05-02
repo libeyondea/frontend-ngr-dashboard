@@ -111,7 +111,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 					setState((prevState) => ({
 						...prevState,
 						loading: {
-							...prevState.deleting,
+							...prevState.loading,
 							categories: true
 						}
 					}));
@@ -138,7 +138,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 							setState((prevState) => ({
 								...prevState,
 								loading: {
-									...prevState.deleting,
+									...prevState.loading,
 									categories: false
 								}
 							}));
@@ -153,7 +153,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 		setState((prevState) => ({
 			...prevState,
 			loading: {
-				...prevState.deleting,
+				...prevState.loading,
 				categories: true
 			}
 		}));
@@ -180,7 +180,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 				setState((prevState) => ({
 					...prevState,
 					loading: {
-						...prevState.deleting,
+						...prevState.loading,
 						categories: false
 					}
 				}));

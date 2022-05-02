@@ -24,8 +24,6 @@ type Props = {};
 
 const EditPostComponent: React.FC<Props> = () => {
 	const params = useParams();
-	const [isUploading, setUploading] = useState(false);
-	const [isCreating, setCreating] = useState(false);
 
 	const [state, setState] = useState<{
 		data: {
@@ -36,7 +34,7 @@ const EditPostComponent: React.FC<Props> = () => {
 			post: boolean;
 			categories: boolean;
 		};
-		creating: {
+		updating: {
 			post: boolean;
 		};
 		uploading: {
@@ -51,7 +49,7 @@ const EditPostComponent: React.FC<Props> = () => {
 			post: true,
 			categories: true
 		},
-		creating: {
+		updating: {
 			post: false
 		},
 		uploading: {
@@ -168,7 +166,13 @@ const EditPostComponent: React.FC<Props> = () => {
 				if (!values.image) {
 					return resolve({});
 				}
-				setUploading(true);
+				setState((prevState) => ({
+					...prevState,
+					uploading: {
+						...prevState.uploading,
+						post: true
+					}
+				}));
 				imageService
 					.upload({
 						image: values.image
@@ -180,11 +184,23 @@ const EditPostComponent: React.FC<Props> = () => {
 						return reject(error);
 					})
 					.finally(() => {
-						setUploading(false);
+						setState((prevState) => ({
+							...prevState,
+							uploading: {
+								...prevState.uploading,
+								post: false
+							}
+						}));
 					});
 			})
 				.then((result) => {
-					setCreating(true);
+					setState((prevState) => ({
+						...prevState,
+						updating: {
+							...prevState.uploading,
+							post: true
+						}
+					}));
 					const payload = {
 						title: values.title,
 						slug: values.slug,
@@ -217,7 +233,13 @@ const EditPostComponent: React.FC<Props> = () => {
 							}
 						})
 						.finally(() => {
-							setCreating(false);
+							setState((prevState) => ({
+								...prevState,
+								updating: {
+									...prevState.uploading,
+									post: false
+								}
+							}));
 						});
 				})
 				.catch((error) => {
@@ -469,20 +491,21 @@ const EditPostComponent: React.FC<Props> = () => {
 											className={classNames(
 												'flex items-center justify-center py-3 px-4 bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 focus:ring-offset-purple-200 text-white transition ease-in duration-200 text-sm font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md',
 												{
-													'cursor-not-allowed disabled:opacity-50': isUploading || isCreating
+													'cursor-not-allowed disabled:opacity-50':
+														state.uploading.post || state.updating.post
 												}
 											)}
-											disabled={isUploading || isCreating}
+											disabled={state.uploading.post || state.updating.post}
 										>
-											{isUploading ? (
+											{state.uploading.post ? (
 												<>
 													<AiOutlineLoading3Quarters className="animate-spin h-4 w-4 mr-2 font-medium" />
 													<span>Uploading</span>
 												</>
-											) : isCreating ? (
+											) : state.updating.post ? (
 												<>
 													<AiOutlineLoading3Quarters className="animate-spin h-4 w-4 mr-2 font-medium" />
-													<span>Creating</span>
+													<span>Updating</span>
 												</>
 											) : (
 												<span>Submit</span>

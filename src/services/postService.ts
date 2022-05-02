@@ -4,12 +4,13 @@ import { CreatePost, Post, UpdatePost } from 'models/post';
 import { ResponseData, ResponseDataPagination } from 'models/response';
 
 const postService = {
-	list: (page: number = 1, page_size: number = 10) => {
+	list: (page: number = 1, page_size: number = 10, q?: string) => {
 		return http.get<ResponseDataPagination<Post[]>>({
 			url: config.API.END_POINT.CRUD_POST,
 			params: {
 				page,
-				page_size
+				page_size,
+				q
 			}
 		});
 	},

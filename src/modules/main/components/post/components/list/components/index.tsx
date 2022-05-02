@@ -13,39 +13,145 @@ import classNames from 'classnames';
 import Paginationomponent from 'components/Pagination/components';
 import TableLoadingComponent from 'components/TableLoading/components';
 import BlockUIComponent from 'components/BlockUI/components';
+import FilterComponent from 'components/Filter/components';
 
 type Props = {};
 
 const ListPostComponent: React.FC<Props> = () => {
-	const [isLoading, setLoading] = useState(true);
-	const [isDeleting, setDeleting] = useState(false);
-	const [data, setData] = useState<Post[]>([]);
-	const [pagination, setPagination] = useState({
-		page: 1,
-		limit: 10,
-		limits: [10, 20, 50, 100],
-		total: 0
+	const [formSearch, setFormSearch] = useState({
+		q: ''
+	});
+
+	const [state, setState] = useState<{
+		data: {
+			posts: Post[];
+		};
+		pagination: {
+			posts: {
+				page: number;
+				limit: number;
+				limits: number[];
+				total: number;
+			};
+		};
+		filter: {
+			posts: {
+				q: string;
+			};
+		};
+		loading: {
+			posts: boolean;
+		};
+		deleting: {
+			posts: boolean;
+		};
+	}>({
+		data: {
+			posts: []
+		},
+		pagination: {
+			posts: {
+				page: 1,
+				limit: 10,
+				limits: [10, 20, 50, 100],
+				total: 0
+			}
+		},
+		filter: {
+			posts: {
+				q: ''
+			}
+		},
+		loading: {
+			posts: true
+		},
+		deleting: {
+			posts: false
+		}
 	});
 
 	const onChangePage = (page: number) => {
-		setPagination((prevState) => ({
+		setState((prevState) => ({
 			...prevState,
-			page: page
+			pagination: {
+				...prevState.pagination,
+				posts: {
+					...prevState.pagination.posts,
+					page: page
+				}
+			}
 		}));
 	};
 
 	const onChangeLimit = (limit: number) => {
-		setPagination((prevState) => ({
+		setState((prevState) => ({
 			...prevState,
-			limit: limit,
-			page: 1
+			pagination: {
+				...prevState.pagination,
+				posts: {
+					...prevState.pagination.posts,
+					limit: limit,
+					page: 1
+				}
+			}
+		}));
+	};
+
+	const handleChangeSearch = (value: string) => {
+		if (!value) {
+			setState((prevState) => ({
+				...prevState,
+				filter: {
+					...prevState.filter,
+					posts: {
+						...prevState.filter.posts,
+						q: ''
+					}
+				},
+				pagination: {
+					...prevState.pagination,
+					posts: {
+						...prevState.pagination.posts,
+						page: 1
+					}
+				}
+			}));
+		}
+		setFormSearch({
+			q: value
+		});
+	};
+
+	const handleSubmitSearch = () => {
+		setState((prevState) => ({
+			...prevState,
+			filter: {
+				...prevState.filter,
+				posts: {
+					...prevState.filter.posts,
+					q: formSearch.q
+				}
+			},
+			pagination: {
+				...prevState.pagination,
+				posts: {
+					...prevState.pagination.posts,
+					page: 1
+				}
+			}
 		}));
 	};
 
 	const onDeleteClicked = (postId: number) => {
 		if (window.confirm('Do you want to delete?')) {
 			new Promise((resolve, reject) => {
-				setDeleting(true);
+				setState((prevState) => ({
+					...prevState,
+					deleting: {
+						...prevState.deleting,
+						posts: true
+					}
+				}));
 				postService
 					.delete(postId)
 					.then((response) => {
@@ -55,23 +161,50 @@ const ListPostComponent: React.FC<Props> = () => {
 						return reject(error);
 					})
 					.finally(() => {
-						setDeleting(false);
+						setState((prevState) => ({
+							...prevState,
+							deleting: {
+								...prevState.deleting,
+								posts: false
+							}
+						}));
 					});
 			})
 				.then((result) => {
-					setLoading(true);
+					setState((prevState) => ({
+						...prevState,
+						loading: {
+							...prevState.loading,
+							posts: true
+						}
+					}));
 					postService
-						.list(pagination.page, pagination.limit)
+						.list(state.pagination.posts.page, state.pagination.posts.limit, state.filter.posts.q)
 						.then((response) => {
-							setData(response.data.data);
-							setPagination((prevState) => ({
+							setState((prevState) => ({
 								...prevState,
-								total: response.data.pagination.total
+								data: {
+									...prevState.data,
+									posts: response.data.data
+								},
+								pagination: {
+									...prevState.pagination,
+									posts: {
+										...prevState.pagination.posts,
+										total: response.data.pagination.total
+									}
+								}
 							}));
 						})
 						.catch((error) => {})
 						.finally(() => {
-							setLoading(false);
+							setState((prevState) => ({
+								...prevState,
+								loading: {
+									...prevState.loading,
+									posts: false
+								}
+							}));
 						});
 				})
 				.catch((error) => {})
@@ -80,21 +213,42 @@ const ListPostComponent: React.FC<Props> = () => {
 	};
 
 	useEffect(() => {
-		setLoading(true);
+		setState((prevState) => ({
+			...prevState,
+			loading: {
+				...prevState.loading,
+				posts: true
+			}
+		}));
 		postService
-			.list(pagination.page, pagination.limit)
+			.list(state.pagination.posts.page, state.pagination.posts.limit, state.filter.posts.q)
 			.then((response) => {
-				setData(response.data.data);
-				setPagination((prevState) => ({
+				setState((prevState) => ({
 					...prevState,
-					total: response.data.pagination.total
+					data: {
+						...prevState.data,
+						posts: response.data.data
+					},
+					pagination: {
+						...prevState.pagination,
+						posts: {
+							...prevState.pagination.posts,
+							total: response.data.pagination.total
+						}
+					}
 				}));
 			})
 			.catch((error) => {})
 			.finally(() => {
-				setLoading(false);
+				setState((prevState) => ({
+					...prevState,
+					loading: {
+						...prevState.loading,
+						posts: false
+					}
+				}));
 			});
-	}, [pagination.limit, pagination.page]);
+	}, [state.filter.posts.q, state.pagination.posts.limit, state.pagination.posts.page]);
 
 	const recursiveCategories = (categories: Category[]) => {
 		return categories.map((category) => (
@@ -112,7 +266,12 @@ const ListPostComponent: React.FC<Props> = () => {
 				<div className="col-span-1 w-full">
 					<CardComponent header="List posts">
 						<div className="relative">
-							{isLoading ? (
+							<FilterComponent
+								q={formSearch.q}
+								handleChangeSearch={handleChangeSearch}
+								handleSubmitSearch={handleSubmitSearch}
+							/>
+							{state.loading.posts ? (
 								<TableLoadingComponent />
 							) : (
 								<div className="flex flex-col">
@@ -166,14 +325,14 @@ const ListPostComponent: React.FC<Props> = () => {
 														</tr>
 													</thead>
 													<tbody className="bg-white divide-y divide-gray-200">
-														{!data.length ? (
+														{!state.data.posts.length ? (
 															<tr>
 																<td colSpan={6} className="p-3 whitespace-nowrap text-center">
 																	Empty posts
 																</td>
 															</tr>
 														) : (
-															data.map((post) => (
+															state.data.posts.map((post) => (
 																<tr key={post.id}>
 																	<td className="p-3 text-sm whitespace-normal">
 																		<div className="flex items-center">
@@ -251,14 +410,14 @@ const ListPostComponent: React.FC<Props> = () => {
 								</div>
 							)}
 							<Paginationomponent
-								limits={pagination.limits}
-								total={pagination.total}
-								limit={pagination.limit}
-								currentPage={pagination.page}
+								limits={state.pagination.posts.limits}
+								total={state.pagination.posts.total}
+								limit={state.pagination.posts.limit}
+								currentPage={state.pagination.posts.page}
 								onChangePage={onChangePage}
 								onChangeLimit={onChangeLimit}
 							/>
-							<BlockUIComponent isBlocking={isDeleting} />
+							<BlockUIComponent isBlocking={state.deleting.posts} />
 						</div>
 					</CardComponent>
 				</div>

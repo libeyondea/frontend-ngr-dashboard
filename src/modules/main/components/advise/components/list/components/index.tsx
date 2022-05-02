@@ -171,7 +171,7 @@ const ListAdviseComponent: React.FC<Props> = () => {
 					setState((prevState) => ({
 						...prevState,
 						loading: {
-							...prevState.deleting,
+							...prevState.loading,
 							advises: true
 						}
 					}));
@@ -198,7 +198,7 @@ const ListAdviseComponent: React.FC<Props> = () => {
 							setState((prevState) => ({
 								...prevState,
 								loading: {
-									...prevState.deleting,
+									...prevState.loading,
 									advises: false
 								}
 							}));
@@ -213,7 +213,7 @@ const ListAdviseComponent: React.FC<Props> = () => {
 		setState((prevState) => ({
 			...prevState,
 			loading: {
-				...prevState.deleting,
+				...prevState.loading,
 				advises: true
 			}
 		}));
@@ -240,7 +240,7 @@ const ListAdviseComponent: React.FC<Props> = () => {
 				setState((prevState) => ({
 					...prevState,
 					loading: {
-						...prevState.deleting,
+						...prevState.loading,
 						advises: false
 					}
 				}));
