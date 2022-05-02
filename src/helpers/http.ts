@@ -5,6 +5,7 @@ import { removeCookie } from 'helpers/cookies';
 import * as cookiesConstant from 'constants/cookies';
 import toastify from './toastify';
 import { authCurrentRequestAction } from 'store/auth/actions';
+import { instanceOfBlobInfo } from 'models/image';
 
 const instance = axios.create({
 	baseURL: config.API.URL.API_URL,
@@ -108,7 +109,11 @@ const http = {
 		if (config.files) {
 			for (let field in config.files) {
 				if (config.files[field]) {
-					formData.append(field, config.files[field], config.files[field].name);
+					if (instanceOfBlobInfo(config.files[field])) {
+						formData.append(field, config.files[field].blob(), config.files[field].filename());
+					} else {
+						formData.append(field, config.files[field], config.files[field].name);
+					}
 				}
 			}
 		}

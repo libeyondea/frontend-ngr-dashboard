@@ -124,7 +124,7 @@ const EditPostComponent: React.FC<Props> = () => {
 		initialValues: {
 			title: state.data.post.title,
 			slug: state.data.post.slug,
-			excerpt: state.data.post.excerpt,
+			excerpt: state.data.post.excerpt || '',
 			content: state.data.post.content,
 			status: state.data.post.status,
 			category_id: state.data.post.category_id,

@@ -1,4 +1,5 @@
 import { Editor, IAllProps } from '@tinymce/tinymce-react';
+import imageService from 'services/imageService';
 
 interface Props extends IAllProps {
 	onChangeCustom: (field: string, value: string, shouldValidate?: boolean) => void;
@@ -11,12 +12,29 @@ const EditorInput: React.FC<Props> = ({ onChangeCustom, name, value, ...props })
 		<Editor
 			{...props}
 			onEditorChange={(a, editor) => {
+				console.log(editor.getContent());
 				onChangeCustom(name, editor.getContent());
 				localStorage.setItem('editor_content', editor.getContent());
 			}}
 			apiKey={process.env.REACT_APP_TINYMCE_API_KEY}
 			value={value}
 			init={{
+				images_upload_handler: (blobInfo, progress): Promise<string> => {
+					console.log(blobInfo, progress);
+					return new Promise<string>((resolve, reject) => {
+						imageService
+							.upload({
+								image: blobInfo
+							})
+							.then((response) => {
+								return resolve(response.data.data.image_url);
+							})
+							.catch((error) => {
+								return reject(error);
+							})
+							.finally(() => {});
+					});
+				},
 				toolbar_sticky: true,
 				height: 666,
 				toolbar_mode: 'sliding',
