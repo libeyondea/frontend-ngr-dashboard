@@ -5,16 +5,16 @@ interface Props extends IAllProps {
 	onChangeCustom: (field: string, value: string, shouldValidate?: boolean) => void;
 	name: string;
 	value: string;
+	tempName?: string;
 }
 
-const EditorInput: React.FC<Props> = ({ onChangeCustom, name, value, ...props }) => {
+const EditorInput: React.FC<Props> = ({ onChangeCustom, name, value, tempName, ...props }) => {
 	return (
 		<Editor
 			{...props}
 			onEditorChange={(a, editor) => {
-				console.log(editor.getContent());
 				onChangeCustom(name, editor.getContent());
-				localStorage.setItem('editor_content', editor.getContent());
+				tempName && localStorage.setItem(tempName, editor.getContent());
 			}}
 			apiKey={process.env.REACT_APP_TINYMCE_API_KEY}
 			value={value}

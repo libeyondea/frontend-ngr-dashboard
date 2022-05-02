@@ -5,6 +5,7 @@ import { FormikProps, useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import * as routeConstant from 'constants/route';
 import * as postConstant from 'constants/post';
+import * as localStorageConstant from 'constants/localStorage';
 import * as Yup from 'yup';
 import classNames from 'classnames';
 import ImageInput from 'components/ImageInput/components';
@@ -90,7 +91,7 @@ const NewPostComponent: React.FC<Props> = () => {
 			title: '',
 			slug: '',
 			excerpt: '',
-			content: localStorage.getItem('editor_content') || '',
+			content: localStorage.getItem(localStorageConstant.LOCAL_STORAGE_EDITOR_CONTENT) || '',
 			status: postConstant.POST_STATUS_PUBLISH,
 			category_id: 0,
 			tags: [],
@@ -181,7 +182,8 @@ const NewPostComponent: React.FC<Props> = () => {
 					postService
 						.create(payload)
 						.then((response) => {
-							toastify.success('Create user success');
+							toastify.success('Create post success');
+							localStorage.setItem(localStorageConstant.LOCAL_STORAGE_EDITOR_CONTENT, '');
 							navigate(`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_POST}`);
 						})
 						.catch((error) => {
@@ -212,18 +214,6 @@ const NewPostComponent: React.FC<Props> = () => {
 		}
 	});
 
-	/* const handleImageUpload = (image: File): Promise<string> =>
-		new Promise<string>((resolve, reject) => {
-			imageService
-				.upload({
-					image: image
-				})
-				.then((response) => {
-					return resolve(response.data.data.image);
-				})
-				.catch(() => reject(new Error('Upload failed')));
-		}); */
-
 	const recursiveCategories = (categories: Category[], level: string = '') => {
 		return categories.map((category) => (
 			<Fragment key={category.id}>
@@ -235,10 +225,10 @@ const NewPostComponent: React.FC<Props> = () => {
 
 	return (
 		<>
-			<BreadcrumbComponent className="mb-4">New user</BreadcrumbComponent>
+			<BreadcrumbComponent className="mb-4">New post</BreadcrumbComponent>
 			<div className="grid grid-cols-1 gap-4">
 				<div className="col-span-1 w-full">
-					<CardComponent header="New user">
+					<CardComponent header="New post">
 						<form onSubmit={formik.handleSubmit}>
 							<div className="grid grid-cols-2 gap-4">
 								<div className="col-span-2">
@@ -344,6 +334,7 @@ const NewPostComponent: React.FC<Props> = () => {
 											name="content"
 											value={formik.values.content}
 											onChangeCustom={formik.setFieldValue}
+											tempName={localStorageConstant.LOCAL_STORAGE_EDITOR_CONTENT}
 										/>
 									</div>
 									{formik.errors.content && formik.touched.content && (
