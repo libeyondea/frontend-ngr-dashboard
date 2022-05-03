@@ -5,7 +5,7 @@ import time from 'helpers/time';
 import { useEffect, useState, Fragment } from 'react';
 import * as routeConstant from 'constants/route';
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa';
-import Paginationomponent from 'components/Pagination/components';
+import PaginationComponent from 'components/Pagination/components';
 import TableLoadingComponent from 'components/TableLoading/components';
 import BlockUIComponent from 'components/BlockUI/components';
 import { Advise } from 'models/advise';
@@ -364,7 +364,7 @@ const ListAdviseComponent: React.FC<Props> = () => {
 									</div>
 								</div>
 							)}
-							<Paginationomponent
+							<PaginationComponent
 								limits={state.pagination.advises.limits}
 								total={state.pagination.advises.total}
 								limit={state.pagination.advises.limit}

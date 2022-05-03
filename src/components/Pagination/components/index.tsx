@@ -11,7 +11,7 @@ type Props = {
 	onChangeLimit: (limit: number) => void;
 };
 
-const Paginationomponent: React.FC<Props> = ({
+const PaginationComponent: React.FC<Props> = ({
 	limits = [10, 20, 50, 100],
 	total,
 	limit,
@@ -172,4 +172,4 @@ const Paginationomponent: React.FC<Props> = ({
 	);
 };
 
-export default Paginationomponent;
+export default PaginationComponent;

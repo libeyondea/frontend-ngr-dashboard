@@ -9,7 +9,7 @@ import * as routeConstant from 'constants/route';
 import * as userConstant from 'constants/user';
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa';
 import classNames from 'classnames';
-import Paginationomponent from 'components/Pagination/components';
+import PaginationComponent from 'components/Pagination/components';
 import TableLoadingComponent from 'components/TableLoading/components';
 import BlockUIComponent from 'components/BlockUI/components';
 
@@ -234,7 +234,7 @@ const ListUserComponent: React.FC<Props> = () => {
 									</div>
 								</div>
 							)}
-							<Paginationomponent
+							<PaginationComponent
 								limits={pagination.limits}
 								total={pagination.total}
 								limit={pagination.limit}

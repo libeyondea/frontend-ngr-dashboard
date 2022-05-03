@@ -6,7 +6,7 @@ import { Category } from 'models/category';
 import { useEffect, useState, Fragment } from 'react';
 import * as routeConstant from 'constants/route';
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa';
-import Paginationomponent from 'components/Pagination/components';
+import PaginationComponent from 'components/Pagination/components';
 import TableLoadingComponent from 'components/TableLoading/components';
 import BlockUIComponent from 'components/BlockUI/components';
 import categoryService from 'services/categoryService';
@@ -292,7 +292,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 									</div>
 								</div>
 							)}
-							<Paginationomponent
+							<PaginationComponent
 								limits={state.pagination.categories.limits}
 								total={state.pagination.categories.total}
 								limit={state.pagination.categories.limit}
