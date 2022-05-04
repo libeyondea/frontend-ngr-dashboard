@@ -11,6 +11,7 @@ import BlockUIComponent from 'components/BlockUI/components';
 import { Advise } from 'models/advise';
 import adviseService from 'services/adviseService';
 import FilterComponent from 'components/Filter/components';
+import TableComponent from 'components/Table/components';
 
 type Props = {};
 
@@ -262,107 +263,58 @@ const ListAdviseComponent: React.FC<Props> = () => {
 							{state.loading.advises ? (
 								<TableLoadingComponent />
 							) : (
-								<div className="flex flex-col">
-									<div className="overflow-x-auto">
-										<div className="align-middle inline-block min-w-full">
-											<div className="overflow-hidden border-2 border-gray-200 rounded-md">
-												<table className="min-w-full divide-y divide-gray-200">
-													<thead className="bg-gray-50">
-														<tr>
-															<th
-																scope="col"
-																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
-																style={{ minWidth: '20rem' }}
-															>
-																Advise
-															</th>
-															<th
-																scope="col"
-																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
-																style={{ minWidth: '20rem' }}
-															>
-																Email
-															</th>
-															<th
-																scope="col"
-																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
-															>
-																Phone number
-															</th>
-															<th
-																scope="col"
-																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider whitespace-nowrap"
-															>
-																Updated at
-															</th>
-															<th
-																scope="col"
-																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider whitespace-nowrap"
-															>
-																Created at
-															</th>
-															<th scope="col" className="relative p-3">
-																<span className="sr-only">Action</span>
-															</th>
-														</tr>
-													</thead>
-													<tbody className="bg-white divide-y divide-gray-200">
-														{!state.data.advises.length ? (
-															<tr>
-																<td colSpan={6} className="p-3 whitespace-nowrap text-center">
-																	Empty advises
-																</td>
-															</tr>
-														) : (
-															state.data.advises.map((advise) => (
-																<tr key={advise.id}>
-																	<td className="p-3 text-sm whitespace-normal">
-																		<div className="flex items-center">
-																			<div>
-																				<div className="text-sm font-medium text-gray-900">
-																					{advise.name}
-																				</div>
-																			</div>
-																		</div>
-																	</td>
-																	<td className="p-3 whitespace-normal text-sm text-gray-500">
-																		{advise.email}
-																	</td>
-																	<td className="p-3 whitespace-normal text-sm text-gray-500">
-																		{advise.phone_number}
-																	</td>
-																	<td className="p-3 whitespace-nowrap text-sm text-gray-500">
-																		{time.ago(advise.updated_at)}
-																	</td>
-																	<td className="p-3 whitespace-nowrap text-sm text-gray-500">
-																		{time.format(advise.created_at)}
-																	</td>
-																	<td className="p-3 whitespace-nowrap text-right text-sm font-medium">
-																		<div className="flex items-center">
-																			<LinkComponent
-																				to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_ADVISE}/${advise.id}/${routeConstant.ROUTE_NAME_MAIN_ADVISE_EDIT}`}
-																				className="text-indigo-600 hover:textS-indigo-900 mr-2"
-																			>
-																				<FaRegEdit className="h-5 w-5" />
-																			</LinkComponent>
-																			<button
-																				type="button"
-																				className="text-red-600 hover:text-red-900"
-																				onClick={() => onDeleteClicked(advise.id)}
-																			>
-																				<FaRegTrashAlt className="h-5 w-5" />
-																			</button>
-																		</div>
-																	</td>
-																</tr>
-															))
-														)}
-													</tbody>
-												</table>
-											</div>
-										</div>
-									</div>
-								</div>
+								<TableComponent>
+									<TableComponent.Thead>
+										<TableComponent.Tr>
+											<TableComponent.Th>Advise</TableComponent.Th>
+											<TableComponent.Th>Email</TableComponent.Th>
+											<TableComponent.Th>Phone number</TableComponent.Th>
+											<TableComponent.Th>Updated at</TableComponent.Th>
+											<TableComponent.Th>Created at</TableComponent.Th>
+											<TableComponent.Th>
+												<span className="sr-only">Action</span>
+											</TableComponent.Th>
+										</TableComponent.Tr>
+									</TableComponent.Thead>
+									<TableComponent.Tbody>
+										<Fragment>
+											{!state.data.advises.length ? (
+												<TableComponent.Tr>
+													<TableComponent.Td colSpan={6}>Empty advises</TableComponent.Td>
+												</TableComponent.Tr>
+											) : (
+												state.data.advises.map((advise) => (
+													<TableComponent.Tr key={advise.id}>
+														<TableComponent.Td>
+															<div className="text-sm font-medium text-gray-900">{advise.name}</div>
+														</TableComponent.Td>
+														<TableComponent.Td>{advise.email}</TableComponent.Td>
+														<TableComponent.Td>{advise.phone_number}</TableComponent.Td>
+														<TableComponent.Td>{time.ago(advise.updated_at)}</TableComponent.Td>
+														<TableComponent.Td>{time.format(advise.created_at)}</TableComponent.Td>
+														<TableComponent.Td>
+															<div className="flex items-center">
+																<LinkComponent
+																	to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_ADVISE}/${advise.id}/${routeConstant.ROUTE_NAME_MAIN_ADVISE_EDIT}`}
+																	className="text-indigo-600 hover:textS-indigo-900 mr-2"
+																>
+																	<FaRegEdit className="h-5 w-5" />
+																</LinkComponent>
+																<button
+																	type="button"
+																	className="text-red-600 hover:text-red-900"
+																	onClick={() => onDeleteClicked(advise.id)}
+																>
+																	<FaRegTrashAlt className="h-5 w-5" />
+																</button>
+															</div>
+														</TableComponent.Td>
+													</TableComponent.Tr>
+												))
+											)}
+										</Fragment>
+									</TableComponent.Tbody>
+								</TableComponent>
 							)}
 							<PaginationComponent
 								limits={state.pagination.advises.limits}

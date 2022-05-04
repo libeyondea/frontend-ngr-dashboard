@@ -10,6 +10,7 @@ import PaginationComponent from 'components/Pagination/components';
 import TableLoadingComponent from 'components/TableLoading/components';
 import BlockUIComponent from 'components/BlockUI/components';
 import categoryService from 'services/categoryService';
+import TableComponent from 'components/Table/components';
 
 type Props = {};
 
@@ -190,21 +191,17 @@ const ListCategoryComponent: React.FC<Props> = () => {
 	const recursiveCategories = (categories: Category[], level: string = '') => {
 		return categories.map((category) => (
 			<Fragment key={category.id}>
-				<tr>
-					<td className="p-3 text-sm whitespace-normal">
-						<div className="flex items-center">
-							<div>
-								<div
-									className="text-sm font-medium text-gray-900"
-									dangerouslySetInnerHTML={{ __html: level + category.name }}
-								/>
-							</div>
-						</div>
-					</td>
-					<td className="p-3 whitespace-normal text-sm text-gray-500">{category.slug}</td>
-					<td className="p-3 whitespace-nowrap text-sm text-gray-500">{time.ago(category.updated_at)}</td>
-					<td className="p-3 whitespace-nowrap text-sm text-gray-500">{time.format(category.created_at)}</td>
-					<td className="p-3 whitespace-nowrap text-right text-sm font-medium">
+				<TableComponent.Tr>
+					<TableComponent.Td>
+						<div
+							className="text-sm font-medium text-gray-900"
+							dangerouslySetInnerHTML={{ __html: level + category.name }}
+						/>
+					</TableComponent.Td>
+					<TableComponent.Td>{category.slug}</TableComponent.Td>
+					<TableComponent.Td>{time.ago(category.updated_at)}</TableComponent.Td>
+					<TableComponent.Td>{time.format(category.created_at)}</TableComponent.Td>
+					<TableComponent.Td>
 						<div className="flex items-center">
 							<LinkComponent
 								to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_CATEGORY}/${category.id}/${routeConstant.ROUTE_NAME_MAIN_CATEGORY_EDIT}`}
@@ -220,8 +217,8 @@ const ListCategoryComponent: React.FC<Props> = () => {
 								<FaRegTrashAlt className="h-5 w-5" />
 							</button>
 						</div>
-					</td>
-				</tr>
+					</TableComponent.Td>
+				</TableComponent.Tr>
 				<Fragment>{category.children && recursiveCategories(category.children, level + '—&nbsp;')}</Fragment>
 			</Fragment>
 		));
@@ -237,60 +234,30 @@ const ListCategoryComponent: React.FC<Props> = () => {
 							{state.loading.categories ? (
 								<TableLoadingComponent />
 							) : (
-								<div className="flex flex-col">
-									<div className="overflow-x-auto">
-										<div className="align-middle inline-block min-w-full">
-											<div className="overflow-hidden border-2 border-gray-200 rounded-md">
-												<table className="min-w-full divide-y divide-gray-200">
-													<thead className="bg-gray-50">
-														<tr>
-															<th
-																scope="col"
-																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
-																style={{ minWidth: '20rem' }}
-															>
-																Category
-															</th>
-															<th
-																scope="col"
-																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider"
-																style={{ minWidth: '20rem' }}
-															>
-																Slug
-															</th>
-															<th
-																scope="col"
-																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider whitespace-nowrap"
-															>
-																Updated at
-															</th>
-															<th
-																scope="col"
-																className="p-3 text-left text-sm font-medium text-gray-500 tracking-wider whitespace-nowrap"
-															>
-																Created at
-															</th>
-															<th scope="col" className="relative p-3">
-																<span className="sr-only">Action</span>
-															</th>
-														</tr>
-													</thead>
-													<tbody className="bg-white divide-y divide-gray-200">
-														{!state.data.categories.length ? (
-															<tr>
-																<td colSpan={6} className="p-3 whitespace-nowrap text-center">
-																	Empty categories
-																</td>
-															</tr>
-														) : (
-															recursiveCategories(state.data.categories)
-														)}
-													</tbody>
-												</table>
-											</div>
-										</div>
-									</div>
-								</div>
+								<TableComponent>
+									<TableComponent.Thead>
+										<TableComponent.Tr>
+											<TableComponent.Th>Category</TableComponent.Th>
+											<TableComponent.Th>Slug</TableComponent.Th>
+											<TableComponent.Th>Updated at</TableComponent.Th>
+											<TableComponent.Th>Created at</TableComponent.Th>
+											<TableComponent.Th>
+												<span className="sr-only">Action</span>
+											</TableComponent.Th>
+										</TableComponent.Tr>
+									</TableComponent.Thead>
+									<TableComponent.Tbody>
+										<Fragment>
+											{!state.data.categories.length ? (
+												<TableComponent.Tr>
+													<TableComponent.Td colSpan={6}>Empty categories</TableComponent.Td>
+												</TableComponent.Tr>
+											) : (
+												recursiveCategories(state.data.categories)
+											)}
+										</Fragment>
+									</TableComponent.Tbody>
+								</TableComponent>
 							)}
 							<PaginationComponent
 								limits={state.pagination.categories.limits}

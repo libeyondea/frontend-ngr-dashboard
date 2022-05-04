@@ -278,64 +278,62 @@ const ListPostComponent: React.FC<Props> = () => {
 							{state.loading.posts ? (
 								<TableLoadingComponent />
 							) : (
-								<>
-									<TableComponent>
-										<TableComponent.Thead>
-											<TableComponent.Tr>
-												<TableComponent.Th>Post</TableComponent.Th>
-												<TableComponent.Th>Categories</TableComponent.Th>
-												<TableComponent.Th>Status</TableComponent.Th>
-												<TableComponent.Th>Updated at</TableComponent.Th>
-												<TableComponent.Th>Created at</TableComponent.Th>
-												<TableComponent.Th>
-													<span className="sr-only">Action</span>
-												</TableComponent.Th>
-											</TableComponent.Tr>
-										</TableComponent.Thead>
-										<TableComponent.Tbody>
-											<Fragment>
-												{!state.data.posts.length ? (
-													<TableComponent.Tr>
-														<TableComponent.Td colSpan={6}>Empty posts</TableComponent.Td>
-													</TableComponent.Tr>
-												) : (
-													state.data.posts.map((post) => (
-														<TableComponent.Tr key={post.id}>
-															<TableComponent.Td className="flex items-center">
-																{/* <div className="flex-shrink-0 h-28 w-36 mr-4">
+								<TableComponent>
+									<TableComponent.Thead>
+										<TableComponent.Tr>
+											<TableComponent.Th>Post</TableComponent.Th>
+											<TableComponent.Th>Categories</TableComponent.Th>
+											<TableComponent.Th>Status</TableComponent.Th>
+											<TableComponent.Th>Updated at</TableComponent.Th>
+											<TableComponent.Th>Created at</TableComponent.Th>
+											<TableComponent.Th>
+												<span className="sr-only">Action</span>
+											</TableComponent.Th>
+										</TableComponent.Tr>
+									</TableComponent.Thead>
+									<TableComponent.Tbody>
+										<Fragment>
+											{!state.data.posts.length ? (
+												<TableComponent.Tr>
+													<TableComponent.Td colSpan={6}>Empty posts</TableComponent.Td>
+												</TableComponent.Tr>
+											) : (
+												state.data.posts.map((post) => (
+													<TableComponent.Tr key={post.id}>
+														<TableComponent.Td>
+															{/* <div className="flex-shrink-0 h-28 w-36 mr-4">
 																	<img
 																		className="h-28 w-36"
 																		src={post.image_url}
 																		alt={post.title}
 																	/>
 																</div> */}
-																<div className="text-sm font-medium text-gray-900">
-																	{post.title}
-																</div>
-															</TableComponent.Td>
-															<TableComponent.Td>
-																{recursiveCategories(post.categories)}
-															</TableComponent.Td>
-															<TableComponent.Td>
-																<span
-																	className={classNames(
-																		'px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize',
-																		{
-																			'bg-green-100 text-green-800':
-																				post.status === postConstant.POST_STATUS_PUBLISH,
-																			'bg-yellow-100 text-yellow-800':
-																				post.status === postConstant.POST_STATUS_PENDING,
-																			'bg-red-100 text-gray-400':
-																				post.status === postConstant.POST_STATUS_DRAFT
-																		}
-																	)}
-																>
-																	{post.status}
-																</span>
-															</TableComponent.Td>
-															<TableComponent.Td>{time.ago(post.updated_at)}</TableComponent.Td>
-															<TableComponent.Td>{time.format(post.created_at)}</TableComponent.Td>
-															<TableComponent.Td className="flex items-center">
+															<div className="text-sm font-medium text-gray-900">{post.title}</div>
+														</TableComponent.Td>
+														<TableComponent.Td>
+															{recursiveCategories(post.categories)}
+														</TableComponent.Td>
+														<TableComponent.Td>
+															<span
+																className={classNames(
+																	'px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize',
+																	{
+																		'bg-green-100 text-green-800':
+																			post.status === postConstant.POST_STATUS_PUBLISH,
+																		'bg-yellow-100 text-yellow-800':
+																			post.status === postConstant.POST_STATUS_PENDING,
+																		'bg-red-100 text-gray-400':
+																			post.status === postConstant.POST_STATUS_DRAFT
+																	}
+																)}
+															>
+																{post.status}
+															</span>
+														</TableComponent.Td>
+														<TableComponent.Td>{time.ago(post.updated_at)}</TableComponent.Td>
+														<TableComponent.Td>{time.format(post.created_at)}</TableComponent.Td>
+														<TableComponent.Td>
+															<div className="flex items-center">
 																<LinkComponent
 																	to={`/${routeConstant.ROUTE_NAME_MAIN}/${routeConstant.ROUTE_NAME_MAIN_POST}/${post.id}/${routeConstant.ROUTE_NAME_MAIN_POST_EDIT}`}
 																	className="text-indigo-600 hover:text-indigo-900 mr-2"
@@ -349,14 +347,14 @@ const ListPostComponent: React.FC<Props> = () => {
 																>
 																	<FaRegTrashAlt className="h-5 w-5" />
 																</button>
-															</TableComponent.Td>
-														</TableComponent.Tr>
-													))
-												)}
-											</Fragment>
-										</TableComponent.Tbody>
-									</TableComponent>
-								</>
+															</div>
+														</TableComponent.Td>
+													</TableComponent.Tr>
+												))
+											)}
+										</Fragment>
+									</TableComponent.Tbody>
+								</TableComponent>
 							)}
 							<PaginationComponent
 								limits={state.pagination.posts.limits}
