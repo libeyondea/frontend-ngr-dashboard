@@ -91,7 +91,7 @@ const NewPostComponent: React.FC<Props> = () => {
 			title: '',
 			slug: '',
 			excerpt: '',
-			content: localStorage.getItem(localStorageConstant.LOCAL_STORAGE_EDITOR_CONTENT) || '',
+			content: '',
 			status: postConstant.POST_STATUS_PUBLISH,
 			category_id: 0,
 			tags: [],

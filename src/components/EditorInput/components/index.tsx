@@ -19,6 +19,11 @@ const EditorInput: React.FC<Props> = ({ onChangeCustom, name, value, tempName, .
 			apiKey={process.env.REACT_APP_TINYMCE_API_KEY}
 			value={value}
 			init={{
+				setup: (editor) => {
+					editor.on('init', (e) => {
+						tempName && editor.setContent(localStorage.getItem(tempName) || '');
+					});
+				},
 				images_upload_handler: (blobInfo, progress): Promise<string> => {
 					console.log(blobInfo, progress);
 					return new Promise<string>((resolve, reject) => {
