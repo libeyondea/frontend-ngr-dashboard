@@ -281,6 +281,7 @@ const ListPostComponent: React.FC<Props> = () => {
 								<TableComponent>
 									<TableComponent.Thead>
 										<TableComponent.Tr>
+											<TableComponent.Th>Id</TableComponent.Th>
 											<TableComponent.Th>Post</TableComponent.Th>
 											<TableComponent.Th>Categories</TableComponent.Th>
 											<TableComponent.Th>Status</TableComponent.Th>
@@ -300,6 +301,7 @@ const ListPostComponent: React.FC<Props> = () => {
 											) : (
 												state.data.posts.map((post) => (
 													<TableComponent.Tr key={post.id}>
+														<TableComponent.Td>{post.id}</TableComponent.Td>
 														<TableComponent.Td>
 															{/* <div className="flex-shrink-0 h-28 w-36 mr-4">
 																	<img
