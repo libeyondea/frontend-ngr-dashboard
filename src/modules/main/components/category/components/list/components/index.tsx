@@ -11,10 +11,15 @@ import TableLoadingComponent from 'components/TableLoading/components';
 import BlockUIComponent from 'components/BlockUI/components';
 import categoryService from 'services/categoryService';
 import TableComponent from 'components/Table/components';
+import FilterComponent from 'components/Filter/components';
 
 type Props = {};
 
 const ListCategoryComponent: React.FC<Props> = () => {
+	const [formSearch, setFormSearch] = useState({
+		q: ''
+	});
+
 	const [state, setState] = useState<{
 		data: {
 			categories: Category[];
@@ -25,6 +30,11 @@ const ListCategoryComponent: React.FC<Props> = () => {
 				limit: number;
 				limits: number[];
 				total: number;
+			};
+		};
+		filter: {
+			categories: {
+				q: string;
 			};
 		};
 		loading: {
@@ -43,6 +53,11 @@ const ListCategoryComponent: React.FC<Props> = () => {
 				limit: 10,
 				limits: [10, 20, 50, 100],
 				total: 0
+			}
+		},
+		filter: {
+			categories: {
+				q: ''
 			}
 		},
 		loading: {
@@ -74,6 +89,51 @@ const ListCategoryComponent: React.FC<Props> = () => {
 				categories: {
 					...prevState.pagination.categories,
 					limit: limit,
+					page: 1
+				}
+			}
+		}));
+	};
+
+	const handleChangeSearch = (value: string) => {
+		if (!value) {
+			setState((prevState) => ({
+				...prevState,
+				filter: {
+					...prevState.filter,
+					categories: {
+						...prevState.filter.categories,
+						q: ''
+					}
+				},
+				pagination: {
+					...prevState.pagination,
+					categories: {
+						...prevState.pagination.categories,
+						page: 1
+					}
+				}
+			}));
+		}
+		setFormSearch({
+			q: value
+		});
+	};
+
+	const handleSubmitSearch = () => {
+		setState((prevState) => ({
+			...prevState,
+			filter: {
+				...prevState.filter,
+				categories: {
+					...prevState.filter.categories,
+					q: formSearch.q
+				}
+			},
+			pagination: {
+				...prevState.pagination,
+				categories: {
+					...prevState.pagination.categories,
 					page: 1
 				}
 			}
@@ -117,7 +177,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 						}
 					}));
 					categoryService
-						.list(state.pagination.categories.page, state.pagination.categories.limit)
+						.list(state.pagination.categories.page, state.pagination.categories.limit, state.filter.categories.q)
 						.then((response) => {
 							setState((prevState) => ({
 								...prevState,
@@ -159,7 +219,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 			}
 		}));
 		categoryService
-			.list(state.pagination.categories.page, state.pagination.categories.limit)
+			.list(state.pagination.categories.page, state.pagination.categories.limit, state.filter.categories.q)
 			.then((response) => {
 				setState((prevState) => ({
 					...prevState,
@@ -186,7 +246,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 					}
 				}));
 			});
-	}, [state.pagination.categories.limit, state.pagination.categories.page]);
+	}, [state.filter.categories.q, state.pagination.categories.limit, state.pagination.categories.page]);
 
 	const recursiveCategories = (categories: Category[], level: string = '') => {
 		return categories.map((category) => (
@@ -231,6 +291,11 @@ const ListCategoryComponent: React.FC<Props> = () => {
 				<div className="col-span-1 w-full">
 					<CardComponent header="List categories">
 						<div className="relative">
+							<FilterComponent
+								q={formSearch.q}
+								handleChangeSearch={handleChangeSearch}
+								handleSubmitSearch={handleSubmitSearch}
+							/>
 							{state.loading.categories ? (
 								<TableLoadingComponent />
 							) : (

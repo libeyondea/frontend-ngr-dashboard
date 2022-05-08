@@ -4,12 +4,13 @@ import { Category, CreateCategory, UpdateCategory } from 'models/category';
 import { ResponseData, ResponseDataPagination } from 'models/response';
 
 const categoryService = {
-	list: (page: number = 1, page_size: number = 10) => {
+	list: (page: number = 1, page_size: number = 10, q?: string) => {
 		return http.get<ResponseDataPagination<Category[]>>({
 			url: config.API.END_POINT.CRUD_CATEGORY,
 			params: {
 				page,
-				page_size
+				page_size,
+				q
 			}
 		});
 	},
