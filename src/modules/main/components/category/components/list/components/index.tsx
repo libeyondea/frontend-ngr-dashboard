@@ -255,7 +255,7 @@ const ListCategoryComponent: React.FC<Props> = () => {
 					<TableComponent.Td>
 						<div
 							className="text-sm font-medium text-gray-900"
-							dangerouslySetInnerHTML={{ __html: level + category.name }}
+							dangerouslySetInnerHTML={{ __html: `${!state.filter.categories.q ? level : ''}` + category.name }}
 						/>
 					</TableComponent.Td>
 					<TableComponent.Td>{category.slug}</TableComponent.Td>
