@@ -1,5 +1,5 @@
 const config = {
-	APP_NAME: 'Libeyondea',
+	APP_NAME: 'NGR Admin',
 	LOGO_URL: '/images/libeyondea.png',
 	LOGGER: {
 		REDUX: false
